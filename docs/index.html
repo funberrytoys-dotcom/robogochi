@@ -69,6 +69,19 @@ ul.tight { padding-left: 20px; margin: 0; }
 ul.tight li { margin-bottom: 6px; }
 .note { font-size: 14px; color: var(--muted); font-weight: 700; }
 .foot { padding-top: 26px; font-size: 14px; color: var(--muted); font-weight: 700; }
+.soul-quote { font-family: var(--display); font-weight: 600; font-size: clamp(21px, 3.4vw, 30px); line-height: 1.25; color: var(--lilac); max-width: 26ch; margin: 4px 0 16px; text-wrap: balance; }
+.flow { margin: 4px 0 24px; }
+.flow .loop { margin: 0 0 8px; }
+.loop .when { font-weight: 900; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); min-width: 72px; }
+.loop .chip.core { border-color: var(--mint); box-shadow: inset 0 0 0 1.5px var(--mint); }
+.stages { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+.stage { background: var(--card); border: 1.5px solid var(--line); border-radius: 22px; padding: 16px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.stage .age { font-size: 13px; font-weight: 900; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stage h3 { font-size: 16px; margin: 0; }
+.stage p { font-size: 14.5px; margin: 0; }
+.bubble { align-self: flex-start; background: var(--chip); color: var(--ink); border-radius: 16px 16px 16px 4px; padding: 7px 12px; font-weight: 900; font-size: 15px; line-height: 1.3; }
+.card ul.tight li { font-size: 15.5px; }
+@media (max-width: 900px) { .stages { grid-template-columns: 1fr; } }
 @media (max-width: 760px) {
   .hero, .grid2, .grid3 { grid-template-columns: 1fr; }
   .hero img { max-width: 420px; margin: 0 auto; }
@@ -92,6 +105,7 @@ ul.tight li { margin-bottom: 6px; }
       <a class="btn ghost" href="#video">Видео</a>
       <a class="btn ghost" href="https://github.com/funberrytoys-dotcom/robogochi/releases/latest/download/robogochi.apk">APK для Android</a>
       <a class="btn ghost" href="#robots">20 роботов</a>
+      <a class="btn ghost" href="#soul">ИИ-душа робота</a>
       <a class="btn ghost" href="#money">Как зарабатывает</a>
     </div>
     <div class="facts">
@@ -211,6 +225,94 @@ ul.tight li { margin-bottom: 6px; }
   </div>
 </section>
 
+<section id="soul">
+  <div class="eyebrow">Большая идея · следующая версия</div>
+  <h2>ИИ-душа: робот, которого вырастил сам</h2>
+  <p>В каждом роботе живёт маленький ИИ. Он работает только в телефоне, без интернета, и месяцами учится у своего ребёнка: словам, игрушкам, именам, ритмам, танцам. Через полгода у ребёнка свой ИИ-персонаж, которого больше ни у кого нет.</p>
+  <p class="soul-quote">Робот знает только то, чему его научил ребёнок.</p>
+
+  <h3>Как это устроено</h3>
+  <div class="flow">
+    <div class="loop"><span class="when">Днём</span><span class="chip">Ребёнок показывает, говорит, играет</span><i>→</i><span class="chip">Слух и зрение в телефоне</span><i>→</i><span class="chip">Дневник дня</span></div>
+    <div class="loop"><span class="when">Ночью</span><span class="chip">Сон в доке</span><i>→</i><span class="chip">Повторённое закрепляется</span><i>→</i><span class="chip core">Душа: слова, игрушки, ритмы, характер</span></div>
+    <div class="loop"><span class="when">Утром</span><span class="chip">Фразы только из своих слов</span><i>→</i><span class="chip">Голос робота</span><i>→</i><span class="chip">«Мишка!»</span></div>
+  </div>
+
+  <div class="grid3">
+    <div class="card"><span class="tag">Не берём</span><h3>Чат-бот внутри робота</h3><p>Языковая модель с первого дня болтает обо всём. Расти роботу некуда, он сразу умный. Ровно за это сейчас критикуют ИИ-игрушки.</p></div>
+    <div class="card"><span class="tag">Позже</span><h3>Дообучение модели в телефоне</h3><p>Телефон греется и садится, а что именно выучилось, не проверить. Можно добавить потом как «сны» на новых телефонах во время ночной зарядки.</p></div>
+    <div class="card pick"><span class="tag ok">Рекомендую</span><h3>Мозг, который растёт по частям</h3><p>Выученное хранится в файле «души» на телефоне. Языковая модель служит только «ртом»: складывает выученные слова во фразы, других слов ей брать нельзя.</p></div>
+  </div>
+
+  <h3 style="margin-top:24px">Чему робот учится</h3>
+  <p class="note">Читать ребёнку не нужно: всё через камеру, голос и жесты.</p>
+  <div class="grid3">
+    <div class="card"><h3>Игрушки и слова</h3><p>Ребёнок показывает в камеру своего мишку и говорит «это мишка». Робот хранит не фото, а числовой отпечаток картинки рядом со словом и потом узнаёт мишку сам. Как Teachable Machine от Google.</p></div>
+    <div class="card"><h3>Имена</h3><p>Имя ребёнка, мама, кот, день рождения. Робот здоровается по имени и поздравляет.</p></div>
+    <div class="card"><h3>Ритмы и песенки</h3><p>Стук по стеклу уже в прототипе: сейчас Пик повторяет ритм и забывает. С душой он копит любимые ритмы и потом напевает их сам.</p></div>
+    <div class="card"><h3>Танцы</h3><p>Ребёнок отстукивает такт, робот запоминает связку движений и потом танцует её на коврике.</p></div>
+    <div class="card"><h3>Характер</h3><p>Четыре ползунка: смелый или осторожный, болтун или тихоня, озорник или аккуратист, ласковый или независимый. Они сдвигаются от того, как с роботом играют. Двое детей вырастят из одного Пика двух разных роботов.</p></div>
+    <div class="card"><h3>Что нравится ребёнку</h3><p>Робот выбирает трюк и смотрит на реакцию. Погладили после трюка, значит, будет делать его чаще. Это и есть «агент»: простое обучение на отклике, считается мгновенно на любом телефоне.</p></div>
+  </div>
+
+  <h3 style="margin-top:24px">Пять стадий, как у настоящего малыша</h3>
+  <p>Стадию открывает число своих слов, а не таймер. Кто играет чаще, у того робот заговорит раньше, но месяцы за вечер не проскочить.</p>
+  <div class="stages">
+    <div class="stage"><span class="age">Первые дни<br>без слов</span><h3>Пиплёнок</h3><span class="bubble">пип-пип!</span><p>Пищит, повторяет стук, следит за пальцем.</p></div>
+    <div class="stage"><span class="age">1–2 недели<br>10 слов</span><h3>Первые слова</h3><span class="bubble">Мячик!</span><p>По одному слову робоголосом. Узнаёт 3–5 настоящих игрушек.</p></div>
+    <div class="stage"><span class="age">3–6 недель<br>40 слов</span><h3>Двусловка</h3><span class="bubble">Маша пришла!</span><p>Склеивает два слова. Сам спрашивает «Что это?» про новое.</p></div>
+    <div class="stage"><span class="age">2–3 месяца<br>120 слов</span><h3>Фразы</h3><span class="bubble">Маша, пойдём танцевать?</span><p>Короткие предложения, вспоминает вчерашний день, поёт песенки из ритмов ребёнка.</p></div>
+    <div class="stage"><span class="age">С 4-го месяца<br>300 слов</span><h3>Болтун</h3><span class="bubble">Вчера Пика мыли, было щекотно!</span><p>Рассказывает истории о ваших днях, загадывает загадки, придумывает танцы.</p></div>
+  </div>
+  <p style="margin-top:14px">Для родителей это сильный крючок: <b>ребёнок учит робота и сам учится.</b> Например, можно учить его английским словам.</p>
+
+  <h3 style="margin-top:24px">Почему учёба долгая, как у тамагочи</h3>
+  <div class="grid2">
+    <div class="card"><h3>Закрепляется во сне</h3><p>Днём робот слышит новое слово, ночью в доке «видит сны» и раскладывает день по полочкам. Утром говорит слово сам. Повод вернуться завтра.</p></div>
+    <div class="card"><h3>Своё слово после трёх дней</h3><p>Слово, которое повторили в три разных дня, остаётся навсегда. Случайное потихоньку забывается, и робот смешно вспоминает: «пип… мя… мячик?»</p></div>
+    <div class="card"><h3>Пять новых слов в день</h3><p>Потом робот говорит «голова полная, пип!». Заодно меньше времени у экрана, родителям это понравится.</p></div>
+    <div class="card"><h3>Не наказывает за паузу</h3><p>Неделю не заходили, и робот не грустит и не теряет стадию. Слова, которые тускнеют, ребёнок напоминает за минуту.</p></div>
+  </div>
+
+  <h3 style="margin-top:24px">Что работает внутри телефона</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Часть</th><th>Чем делаем</th><th>Телефоны</th></tr></thead>
+    <tbody>
+      <tr><td><b>Слух</b></td><td>Встроенное в телефон распознавание речи или маленькая модель. Запись голоса не хранится, остаётся только слово</td><td>Любые</td></tr>
+      <tr><td><b>Зрение</b></td><td>Маленькая модель «отпечатков» картинок, десятки МБ. Фото не хранятся</td><td>Любые</td></tr>
+      <tr><td><b>Душа</b></td><td>Файл в телефоне: слова, отпечатки игрушек, имена, ритмы, характер, дневник. Килобайты</td><td>Любые</td></tr>
+      <tr><td><b>Рот</b></td><td>Gemma 4 E2B через LiteRT-LM или встроенная в Android Gemma (AICore), на iPhone встроенная модель Apple. Каждое слово сверяется со словарём робота, незнакомое заменяется писком</td><td>Новые, со стадии «Фразы»</td></tr>
+      <tr><td><b>Голос</b></td><td>Синтез речи в телефоне с робо-фильтром, как нынешний писк</td><td>Любые</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note" style="margin-top:10px">Первые три стадии обходятся без языковой модели: фразы собираются по шаблонам из выученных слов. На старом телефоне робот остаётся милым «двусловкой».</p>
+
+  <div class="grid2" style="margin-top:22px">
+    <div class="card"><h3>Почему сейчас</h3>
+      <ul class="tight">
+        <li>В январе 2026 Common Sense Media оценила ИИ-игрушки как «недопустимые»: небезопасные ответы, давление на ребёнка, сбор данных.</li>
+        <li>PIRG нашла больше 20 детских игрушек, которые работают на взрослых ChatGPT и Gemini.</li>
+        <li>У ИИ-игрушки Bondu в открытом доступе оказались больше 50 тысяч детских переписок.</li>
+        <li>В США законы об ИИ-компаньонах уже примерно в 12 штатах. Нью-Йорк подписал новый в конце октября 2026, Калифорния ужесточила правила для детей в сентябре.</li>
+      </ul>
+    </div>
+    <div class="card"><h3>Безопасно по устройству</h3>
+      <ul class="tight">
+        <li><b>Ничего не уходит в интернет</b>, утекать нечему.</li>
+        <li><b>Только свои слова:</b> взрослых тем быть не может, таких слов робот не знает.</li>
+        <li><b>Всегда робот</b> и никогда не притворяется человеком.</li>
+        <li><b>Не давит на жалость:</b> никаких «не уходи», и он не умирает.</li>
+        <li><b>Экран для родителей «Что знает Пик»:</b> все слова, игрушки и имена видны, любое можно стереть.</li>
+        <li><b>Душа переносится</b> на новый телефон файлом. Робот Moxie перестал работать, когда в конце 2024 года закрылась компания и отключились её сервера. У нас робот от серверов не зависит.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note" style="margin-top:12px">Большинство законов не трогают узкие игровые функции, а робот с ограниченным словарём ближе к игровому персонажу, чем к чат-боту. Но там отдельно смотрят на очки и награды, которые удерживают ребёнка в разговоре, а у нас есть винтики. Перед запуском в США схему нужно проверить с юристом.</p>
+  <p class="note">Источники: <a href="https://www.commonsensemedia.org/press-releases/common-sense-media-warns-against-ai-toy-companions-after-research-reveals-safety-risks" target="_blank" rel="noopener">Common Sense Media</a>, <a href="https://www.techrepublic.com/article/news-ai-toys-privacy-risks/" target="_blank" rel="noopener">TechRepublic</a>, <a href="https://techpolicy.press/what-12-state-companion-bot-laws-demand-of-ai-providers" target="_blank" rel="noopener">Tech Policy Press</a>, <a href="https://developers.googleblog.com/bring-state-of-the-art-agentic-skills-to-the-edge-with-gemma-4/" target="_blank" rel="noopener">Google: Gemma 4 на устройстве</a>.</p>
+
+  <div class="card pick" style="margin-top:18px"><span class="tag ok">Первый шаг</span><h3>Прототип «Первые слова»</h3><p>Без языковой модели. Ребёнок показывает игрушку в камеру и называет её, робот засыпает, а утром говорит слово и узнаёт игрушку. Для показа кнопка «перемотать ночь». В нынешнем коде есть за что зацепиться: Пик уже повторяет стук, а сохранение игры — один объект, к нему добавится душа.</p></div>
+</section>
+
 <section>
   <div class="eyebrow">Мини-игры</div>
   <h2>Короткие, по 30–60 секунд, герой в них сам робот</h2>
@@ -257,6 +359,7 @@ ul.tight li { margin-bottom: 6px; }
     <li>Выбрать путь 2D или 3D и движок.</li>
     <li>Музыка: главная тема, мини-игры, колыбельная (Suno). Сейчас в прототипе временный синтезированный бит.</li>
     <li>Добавить «поход» и недельную посылку, ещё две мини-игры, звуки на ElevenLabs по желанию.</li>
+    <li>Собрать прототип ИИ-души «Первые слова» и показать детям, как робот утром вспоминает выученное.</li>
     <li>Родительский раздел и покупки наборов, затем закрытый тест в Google Play.</li>
   </ol>
 </section>
