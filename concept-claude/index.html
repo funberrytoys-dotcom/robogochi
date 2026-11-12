@@ -262,14 +262,21 @@ ul.tight li { margin-bottom: 6px; }
   <div class="tbl"><table>
     <thead><tr><th>Часть</th><th>Чем делаем</th><th>Телефоны</th></tr></thead>
     <tbody>
-      <tr><td><b>Слух</b></td><td>Встроенное в телефон распознавание речи или маленькая модель. Запись голоса не хранится, остаётся только слово</td><td>Любые</td></tr>
-      <tr><td><b>Зрение</b></td><td>Маленькая модель «отпечатков» картинок, десятки МБ. Фото не хранятся</td><td>Любые</td></tr>
+      <tr><td><b>Слух</b></td><td>Распознавание речи самого телефона, а если его нет, маленькая офлайн-модель для русского (например, Vosk, около 45 МБ). Запись голоса не хранится, остаётся только слово</td><td>Любые</td></tr>
+      <tr><td><b>Зрение</b></td><td>Модель уровня MobileNet для «отпечатков» картинок, около 10 МБ. Фото не хранятся</td><td>Любые</td></tr>
       <tr><td><b>Душа</b></td><td>Файл в телефоне: слова, отпечатки игрушек, имена, ритмы, характер, дневник. Килобайты</td><td>Любые</td></tr>
-      <tr><td><b>Рот</b></td><td>Gemma 4 E2B через LiteRT-LM или встроенная в Android Gemma (AICore), на iPhone встроенная модель Apple. Каждое слово сверяется со словарём робота, незнакомое заменяется писком</td><td>Новые, со стадии «Фразы»</td></tr>
+      <tr><td><b>Рот</b></td><td>«Робо-рот»: Gemma 3 270M, которую мы дообучаем говорить как робот-малыш. Одна модель на Android и iPhone через LiteRT-LM, около 300 МБ, скачивается, когда робот доходит до стадии «Фразы». Каждое слово сверяется со словарём робота, незнакомое заменяется писком</td><td>Почти любые, со стадии «Фразы»</td></tr>
+      <tr><td><b>Запасной рот</b></td><td>Gemma 4 E2B, только если 270M не справится с историями на стадии «Болтун». Нужно около 1,3 ГБ памяти</td><td>С 6 ГБ памяти</td></tr>
       <tr><td><b>Голос</b></td><td>Синтез речи в телефоне с робо-фильтром, как нынешний писк</td><td>Любые</td></tr>
     </tbody>
   </table></div>
-  <p class="note" style="margin-top:10px">Первые три стадии обходятся без языковой модели: фразы собираются по шаблонам из выученных слов. На старом телефоне робот остаётся милым «двусловкой».</p>
+  <p class="note" style="margin-top:10px">Первые три стадии обходятся без языковой модели: фразы собираются по шаблонам из выученных слов.</p>
+  <div class="grid3" style="margin-top:14px">
+    <div class="card"><h3>Почему 270M</h3><p>Сделана для узких задач, а наша задача узкая: из знакомых слов и вчерашних событий сказать одну короткую фразу. Знания о мире ей не нужны. По замеру Google, 25 разговоров на Pixel 9 Pro тратят 0,75% батареи.</p></div>
+    <div class="card"><h3>Как её учим</h3><p>Большая модель в студии пишет десятки тысяч примеров: стадия, список слов, настроение, дневник и фраза робота. На них за несколько часов дообучаем 270M, сжимаем и выпускаем одним файлом. На русском её ещё надо проверить.</p></div>
+    <div class="card"><h3>Почему не системная</h3><p>Gemini Nano и модель Apple есть только на флагманах, на Android и iPhone робот звучал бы по-разному, а обновление системы могло бы поменять ему голос. Свой набор для дообучения Apple забросила.</p></div>
+  </div>
+  <p style="margin-top:14px">Модель у всех детей одна и та же. Свой ИИ у каждого ребёнка — это его душа: выученные слова, игрушки, ритмы, характер и дневник. Общая модель только переводит душу в речь.</p>
 
   <div class="grid2" style="margin-top:22px">
     <div class="card"><h3>Почему сейчас</h3>
@@ -292,7 +299,7 @@ ul.tight li { margin-bottom: 6px; }
     </div>
   </div>
   <p class="note" style="margin-top:12px">Большинство законов не трогают узкие игровые функции, а робот с ограниченным словарём ближе к игровому персонажу, чем к чат-боту. Но там отдельно смотрят на очки и награды, которые удерживают ребёнка в разговоре, а у нас есть винтики. Перед запуском в США схему нужно проверить с юристом.</p>
-  <p class="note">Источники: <a href="https://www.commonsensemedia.org/press-releases/common-sense-media-warns-against-ai-toy-companions-after-research-reveals-safety-risks" target="_blank" rel="noopener">Common Sense Media</a>, <a href="https://www.techrepublic.com/article/news-ai-toys-privacy-risks/" target="_blank" rel="noopener">TechRepublic</a>, <a href="https://techpolicy.press/what-12-state-companion-bot-laws-demand-of-ai-providers" target="_blank" rel="noopener">Tech Policy Press</a>, <a href="https://developers.googleblog.com/bring-state-of-the-art-agentic-skills-to-the-edge-with-gemma-4/" target="_blank" rel="noopener">Google: Gemma 4 на устройстве</a>.</p>
+  <p class="note">Источники: <a href="https://www.commonsensemedia.org/press-releases/common-sense-media-warns-against-ai-toy-companions-after-research-reveals-safety-risks" target="_blank" rel="noopener">Common Sense Media</a>, <a href="https://www.techrepublic.com/article/news-ai-toys-privacy-risks/" target="_blank" rel="noopener">TechRepublic</a>, <a href="https://techpolicy.press/what-12-state-companion-bot-laws-demand-of-ai-providers" target="_blank" rel="noopener">Tech Policy Press</a>, <a href="https://developers.googleblog.com/bring-state-of-the-art-agentic-skills-to-the-edge-with-gemma-4/" target="_blank" rel="noopener">Google: Gemma 4 на устройстве</a>, <a href="https://www.eweek.com/news/google-gemma-3-270m/" target="_blank" rel="noopener">eWeek: Gemma 3 270M</a>, <a href="https://ai.google.dev/edge/litert-lm/overview" target="_blank" rel="noopener">LiteRT-LM</a>.</p>
 
   <div class="card pick" style="margin-top:18px"><span class="tag ok">Первый шаг</span><h3>Прототип «Первые слова»</h3><p>Без языковой модели. Ребёнок показывает игрушку в камеру и называет её, робот засыпает, а утром говорит слово и узнаёт игрушку. Для показа кнопка «перемотать ночь». В нынешнем коде есть за что зацепиться: Пик уже повторяет стук, а сохранение игры — один объект, к нему добавится душа.</p></div>
 </section>
