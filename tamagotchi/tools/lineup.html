@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#1a1236}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script src="../src/core.js"></script><script src="../src/robots.js"></script><script src="../src/draw_robot.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+const W = 1600, H = 1500; DPR = 2;
+const cv = document.getElementById('c'); cv.width = W*DPR; cv.height = H*DPR; cv.style.width = W+'px'; cv.style.height = H+'px';
+const ctx = cv.getContext('2d'); ctx.setTransform(DPR,0,0,DPR,0,0);
+document.fonts.load('900 20px Nunito').then(draw); setTimeout(draw, 1500);
+function draw(){
+  const g = ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#B9A4F4'); g.addColorStop(1,'#F3D2BA');
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='900 46px Nunito'; ctx.lineWidth=10; ctx.strokeStyle='#3B2A80'; ctx.strokeText('Робогочи · 20 малышей',W/2,56); ctx.fillStyle='#fff'; ctx.fillText('Робогочи · 20 малышей',W/2,56);
+  ctx.font='800 20px Nunito'; ctx.fillStyle='#3B2A80'; ctx.fillText('3 на выбор с начала · 9 открываются за игру · 8 в наборах для взрослых · Toysberry Game Studio',W/2,100);
+  const cols=5, cw=W/cols, ch=(H-140)/4;
+  const exprs=['happy','normal','love','star','happy','look','happy','normal','love','happy','star','happy','normal','love','happy','star','happy','love','normal','happy'];
+  ROBOTS.forEach((d,i)=>{
+    const cx=(i%cols)*cw+cw/2, top=140+Math.floor(i/cols)*ch;
+    const acc = d.access==='start'?['На выбор','#2ED3B7']:d.access==='earn'?['За игру','#4DA3FF']:['Набор «'+d.pack+'»','#F2A20C'];
+    ctx.fillStyle='rgba(255,255,255,0.28)'; ctx.beginPath(); rrect(ctx,cx-cw/2+10,top+6,cw-20,ch-12,26); ctx.fill();
+    const P=defaultPose(); P.px=Math.min(118,(ch-110)/1.62); if(d.topper==='speakers'||d.deco==='saturn')P.px*=0.82; P.x=cx; P.y=top+ch-92; P.t=1+i*0.53; P.expr=exprs[i]; P.blush=1; P.battery=0.9;
+    P.turn=[0,0.25,-0.25][i%3]; P.lookX=P.turn*0.6; P.ant=[0.15,-0.12,0.08][i%3]; P.tilt=[0.03,-0.04,0][i%3];
+    drawRobot(ctx,d,P);
+    ctx.font='900 26px Nunito'; ctx.fillStyle='#2A1A5C'; ctx.fillText(d.name,cx,top+ch-62);
+    const R=RARITY[d.rarity];
+    ctx.font='800 16px Nunito'; const t1=R.icon+' '+R.name, t2=acc[0];
+    const w1=ctx.measureText(t1).width+20, w2=ctx.measureText(t2).width+20, x0=cx-(w1+w2+8)/2;
+    ctx.fillStyle=R.col; ctx.beginPath(); rrect(ctx,x0,top+ch-42,w1,26,13); ctx.fill();
+    ctx.fillStyle=acc[1]; ctx.beginPath(); rrect(ctx,x0+w1+8,top+ch-42,w2,26,13); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.fillText(t1,x0+w1/2,top+ch-28); ctx.fillText(t2,x0+w1+8+w2/2,top+ch-28);
+  });
+  document.title='ready';
+}
+</script></body></html>

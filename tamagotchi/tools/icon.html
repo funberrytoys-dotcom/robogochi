@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:transparent}canvas{display:block}</style></head>
+<body><canvas id="c" width="512" height="512"></canvas>
+<script src="../src/core.js"></script><script src="../src/robots.js"></script><script src="../src/draw_robot.js"></script>
+<script>
+const ctx = document.getElementById('c').getContext('2d'); DPR = 1;
+const d = ROBOT_BY_ID[new URLSearchParams(location.search).get('id') || 'pik'];
+const P = defaultPose(); P.px = 330; P.expr = 'happy'; P.blush = 1; P.t = 1; P.shadow = false; P.ant = 0.15;
+// frame the head: head centre sits at local y ≈ -(0.65 + h/2)
+const hc = -(0.65 + d.head.h / 2);
+P.x = 256; P.y = 270 - hc * P.px;
+drawRobot(ctx, d, P);
+document.title = 'ready';
+</script></body></html>

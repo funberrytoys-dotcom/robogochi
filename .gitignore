@@ -1,0 +1,14 @@
+# Первый заход Codex лежит локально и в репозиторий не входит
+/concept/
+/prototype/
+/source_art/
+/exec-*.png
+/ART-DIRECTION.md
+/plan.md
+
+# Сборка, ключи, временные файлы
+tamagotchi/node_modules/
+tamagotchi/android/keystore/
+tamagotchi/builds/
+*.tmp.*
+/video/

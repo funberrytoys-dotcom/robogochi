@@ -1,0 +1,249 @@
+<title>Концепция Робогочи</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Layout: one reading column with a two-up hero; phone screenshots ride in a side-scrolling strip like a store page */
+:root {
+  --bg: #FBF6FF; --ink: #2A1A5C; --muted: #6B5E8E; --card: #FFFFFF; --line: #E6DCF7;
+  --accent: #FF7A2E; --mint: #13A88F; --lilac: #7B61FF; --gold: #C98A00; --chip: #F1EAFF;
+  --display: 'Unbounded', 'Nunito', system-ui, sans-serif;
+  --body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #140F2A; --ink: #F3EEFF; --muted: #B3A8D6; --card: #1F1840; --line: #352B60; --accent: #FF9A52; --mint: #49E3C8; --lilac: #B9A4F4; --gold: #FFC93C; --chip: #2A2152; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #140F2A; --ink: #F3EEFF; --muted: #B3A8D6; --card: #1F1840; --line: #352B60; --accent: #FF9A52; --mint: #49E3C8; --lilac: #B9A4F4; --gold: #FFC93C; --chip: #2A2152; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1000px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(40px, 8vw, 72px); font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: clamp(24px, 4vw, 32px); font-weight: 800; margin-bottom: 14px; }
+h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+p { margin: 0 0 12px; max-width: 68ch; }
+a { color: var(--lilac); font-weight: 800; }
+section { padding-block: 34px; border-top: 1.5px solid var(--line); }
+.eyebrow { font-weight: 900; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.lead { font-size: 20px; font-weight: 700; color: var(--muted); }
+.hero { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 28px; align-items: center; padding-bottom: 28px; }
+.hero > * { min-width: 0; }
+.hero img { width: 100%; border-radius: 28px; display: block; box-shadow: 0 18px 50px rgba(60, 30, 120, 0.25); }
+.tagline { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 3vw, 26px); margin: 14px 0 12px; color: var(--lilac); }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 900; font-size: 17px; }
+.btn.ghost { background: var(--chip); color: var(--ink); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { background: var(--chip); border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 14px; }
+.strip { display: flex; gap: 14px; overflow-x: auto; padding: 6px 2px 14px; scroll-snap-type: x mandatory; }
+.shot { flex: 0 0 auto; width: 168px; scroll-snap-align: start; }
+.shot img { width: 100%; border-radius: 22px; display: block; border: 3px solid var(--card); box-shadow: 0 8px 24px rgba(60, 30, 120, 0.18); }
+.shot span { display: block; font-size: 14px; font-weight: 800; margin-top: 8px; line-height: 1.3; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card { background: var(--card); border: 1.5px solid var(--line); border-radius: 22px; padding: 18px; min-width: 0; }
+.card p { font-size: 15.5px; margin-bottom: 8px; }
+.card.pick { border-color: var(--mint); box-shadow: inset 0 0 0 1.5px var(--mint); }
+.tag { display: inline-block; font-size: 12px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; background: var(--chip); margin-bottom: 8px; }
+.tag.ok { background: var(--mint); color: #fff; }
+figure { margin: 0; }
+figure img { width: 100%; display: block; border-radius: 22px; }
+figcaption { font-size: 14px; color: var(--muted); font-weight: 700; margin-top: 8px; }
+.tbl { overflow-x: auto; border: 1.5px solid var(--line); border-radius: 18px; background: var(--card); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { font-weight: 900; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td b { white-space: nowrap; }
+.loop { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 18px; }
+.loop .chip { background: var(--card); border: 1.5px solid var(--line); font-size: 15px; padding: 8px 14px; }
+.loop i { font-style: normal; color: var(--accent); font-weight: 900; }
+ol.steps { padding-left: 22px; margin: 0; }
+ol.steps li { margin-bottom: 8px; max-width: 70ch; }
+ul.tight { padding-left: 20px; margin: 0; }
+ul.tight li { margin-bottom: 6px; }
+.note { font-size: 14px; color: var(--muted); font-weight: 700; }
+.foot { padding-top: 26px; font-size: 14px; color: var(--muted); font-weight: 700; }
+@media (max-width: 760px) {
+  .hero, .grid2, .grid3 { grid-template-columns: 1fr; }
+  .hero img { max-width: 420px; margin: 0 auto; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">Toysberry Game Studio · концепция и прототип · 12 ноября 2026</div>
+    <h1>Робогочи</h1>
+    <p class="tagline">Кто-то живёт в твоём телефоне</p>
+    <p class="lead">Детский тамагочи про робота-малыша. Он ходит вперевалку, пищит своим голосом, падает и смешно встаёт, а ребёнок кормит его, моет, укладывает спать и обставляет ему убежище внутри телефона.</p>
+    <div class="cta">
+      <a class="btn" href="https://claude.ai/artifact/BPjiN6bZLybDZxrqAkbrRy" target="_blank" rel="noopener">Играть в прототип</a>
+      <a class="btn ghost" href="#robots">20 роботов</a>
+      <a class="btn ghost" href="#money">Как зарабатывает</a>
+    </div>
+    <div class="facts">
+      <span class="chip">Дети 5–9 и родители</span>
+      <span class="chip">Телефон, портрет</span>
+      <span class="chip">Заходы по 1–3 минуты</span>
+      <span class="chip">Без рекламы</span>
+    </div>
+  </div>
+  <figure>
+    <img src="img/keyart.jpg" alt="Пик, Плюша и Шурш играют с мячиком в убежище внутри телефона" width="900" height="1350">
+    <figcaption>Ключевой арт: так игра может выглядеть в 3D. Нарисован по дизайнам из прототипа.</figcaption>
+  </figure>
+</header>
+
+<section>
+  <div class="eyebrow">Прототип уже работает</div>
+  <h2>Один тамагочи, которого можно потрогать</h2>
+  <p>Открывается по ссылке на телефоне и ставится как приложение на Android (APK 0,26 МБ). Вся графика и анимация рисуются кодом, звуки синтезируются, поэтому все 20 роботов уже живут в одном движке и отличаются только набором параметров.</p>
+  <div class="strip">
+    <div class="shot"><img src="img/s01-logo.jpg" alt="Логотип студии на экране-лице робота" loading="lazy"><span>Заставка: логотип студии загорается на лице робота</span></div>
+    <div class="shot"><img src="img/s02-choose.jpg" alt="Выбор робота" loading="lazy"><span>Выбор малыша из трёх и имя</span></div>
+    <div class="shot"><img src="img/s03-pet.jpg" alt="Поглаживание" loading="lazy"><span>Гладишь по голове: жмурится, урчит, сердечки</span></div>
+    <div class="shot"><img src="img/s04-fall.jpg" alt="Робот упал" loading="lazy"><span>Затыкал много раз: падает, кружится голова, встаёт</span></div>
+    <div class="shot"><img src="img/s05-eat.jpg" alt="Робот ест" loading="lazy"><span>Тащишь печеньку к клюву: открывает, хрустит</span></div>
+    <div class="shot"><img src="img/s06-wash.jpg" alt="Мытьё губкой" loading="lazy"><span>Трёшь губкой: пена, хихикает, отряхивается</span></div>
+    <div class="shot"><img src="img/s07-night.jpg" alt="Ночь" loading="lazy"><span>Спит в доке и заряжается, на стене звёзды</span></div>
+    <div class="shot"><img src="img/s08-catch.jpg" alt="Мини-игра Лови винтики" loading="lazy"><span>«Лови винтики»: водишь робота пальцем</span></div>
+    <div class="shot"><img src="img/s09-simon.jpg" alt="Мини-игра Пи-пи-повтори" loading="lazy"><span>«Пи-пи-повтори»: робот пищит, ты повторяешь</span></div>
+    <div class="shot"><img src="img/s10-shop.jpg" alt="Магазин шапок" loading="lazy"><span>Шапки и мебель за винтики</span></div>
+    <div class="shot"><img src="img/s11-robots.jpg" alt="Коллекция" loading="lazy"><span>Коллекция: условия открытия и наборы</span></div>
+    <div class="shot"><img src="img/s12-room.jpg" alt="Обставленная комната" loading="lazy"><span>Убежище: коврик, ночник, цветок, постер</span></div>
+  </div>
+  <div class="grid3">
+    <div class="card"><span class="tag ok">Есть</span><h3>Уход</h3><p>Еда, мытьё, сон и игра. Четыре шкалы, батарейка на пузике робота. Робот сам показывает облачком, чего хочет. Не умирает и не портится.</p></div>
+    <div class="card"><span class="tag ok">Есть</span><h3>Живость</h3><p>Ходит, переставляя ноги по полу, качается, ловит равновесие, спотыкается. 12 выражений лица, моргание, взгляд за пальцем. Каждый робот пищит своим голосом.</p></div>
+    <div class="card"><span class="tag ok">Есть</span><h3>Жесты</h3><p>Погладить, тыкнуть, пощекотать живот, поднять и уронить, постучать по стеклу (робот отвечает тем же ритмом), бросить мячик (робот бежит пинать).</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Анализ</div>
+  <h2>Что уже есть на рынке</h2>
+  <p>Жанр огромный, но его хиты держатся на одной фирменной фишке. Детских приложений про роботов немного, и почти все они про сборку, а не про уход. Крупного хита «робот-питомец для 5–9 лет» в поиске 12 ноября не нашлось. Ниша выглядит свободной, хотя спрос на неё пока не доказан.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Игра</th><th>Масштаб (Google Play)</th><th>Деньги</th><th>Чем держит</th></tr></thead>
+    <tbody>
+      <tr><td><b>Pou</b></td><td>1 млрд+</td><td>Реклама, монеты</td><td>Простейший цикл: покормить, помыть, уложить, мини-игры за монеты</td></tr>
+      <tr><td><b>My Talking Tom 2</b></td><td>1 млрд+</td><td>Реклама, покупки, подписка</td><td>Повторяет голос писклявым голосом, навыки открывают анимации</td></tr>
+      <tr><td><b>Bubbu</b></td><td>100 млн+</td><td>Реклама, покупки</td><td>30+ мини-игр, мебель, «профессии»</td></tr>
+      <tr><td><b>Toca Boca World</b></td><td>100 млн+</td><td>Бесплатная база, платные наборы, без рекламы</td><td>Свобода без правил, по пятницам бесплатная посылка</td></tr>
+      <tr><td><b>Neko Atsume</b></td><td>10 млн+</td><td>Реклама, рыбки</td><td>Ставишь вещь, приходит гость. Редкие гости только на свои вещи</td></tr>
+      <tr><td><b>Finch</b></td><td>10 млн+</td><td>Подписка, без рекламы</td><td>Питомец уходит в поход и вечером возвращается с историей</td></tr>
+      <tr><td><b>Sago Mini Robot Party</b>, <b>Tinybop Robot Factory</b></td><td>нет данных</td><td>Подписка / разовая покупка</td><td>Собери робота и посмотри, как он оживёт. Ухода нет</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note" style="margin-top:10px">Пороги скачиваний сняты со страниц Google Play 12.11.2026. Полный разбор со ссылками: research/market-v2.md и research/analogues.md.</p>
+
+  <h3 style="margin-top:22px">Что берём у роботов-компаньонов</h3>
+  <div class="grid2">
+    <div class="card"><h3>Microduck · Pollen Robotics и Hugging Face</h3><p>Те самые утята из твоего Shorts с NVIDIA GTC Berlin: рост 25 см, ходят вперевалку, берут вещи клювом, встают после падений, у каждого свой голос. Отсюда утиный клюв, походка с переносом веса и падение как фирменный жест.</p></div>
+    <div class="card"><h3>Cozmo и Vector · Anki</h3><p>Анимации ставил аниматор из Pixar. Вывод: выразительность держится на глазах и паузах, у каждой реакции несколько вариантов, неудача тоже повод для эмоции.</p></div>
+    <div class="card"><h3>Eilik и EMO</h3><p>Разные реакции на голову, спину и живот. Eilik боится, когда его поднимают, у EMO больше 1000 мелких выражений. У нас уже есть зоны касания и реакция на подъём.</p></div>
+    <div class="card"><h3>Вывод для Робогочи</h3><p>Фишка игры: <b>малыш, который падает и встаёт</b> и <b>пищит тебе в ответ</b>. Грусть робота никогда не ведёт в магазин. Возвращаем подарками, а не наказанием.</p></div>
+  </div>
+</section>
+
+<section id="robots">
+  <div class="eyebrow">Персонажи</div>
+  <h2>20 малышей</h2>
+  <p>Общая ДНК: огромная голова-кепка с экраном вместо лица, светящиеся глаза, маленькое тельце с батарейкой на пузике, коротенькие ножки и большие ботинки. У половины утиный клюв от Microduck. Остальные отличаются формой головы: капля, облако, горшок, кристалл, планета.</p>
+  <figure><img src="img/lineup.jpg" alt="20 роботов Робогочи с именами, редкостью и способом открытия" loading="lazy" width="1400" height="1313"><figcaption>Все 20 нарисованы тем же кодом, что и игра, и уже играбельны. В прототипе «Настройки → Демо: открыть всех».</figcaption></figure>
+  <div class="grid3" style="margin-top:16px">
+    <div class="card"><span class="tag">3 на выбор</span><h3>Пик, Плюша, Шурш</h3><p>Ребёнок выбирает одного на старте, двое других доступны в коллекции сразу.</p></div>
+    <div class="card"><span class="tag">9 за игру</span><h3>Клёпа, Капля, Росток…</h3><p>Открываются за дела: «искупай 5 раз», «повтори 5 мелодий», «дружба 10 уровня». Условие и прогресс видны на карточке.</p></div>
+    <div class="card"><span class="tag">8 в наборах</span><h3>Космос, Погода, Шоу</h3><p>Премиум-наборы с персонажами и декором. Игровой силы не дают, только характер, вид и сценки.</p></div>
+  </div>
+  <p style="margin-top:14px">Редкость показана значком, словом и цветом сразу: ● обычный, ◆ редкий, ✦ эпический, ★ легендарный. Редкость выражается в анимации, а не в силе.</p>
+  <figure style="margin-top:18px"><img src="img/pik-sheet.jpg" alt="Пик в 3D: вид спереди, три четверти, сбоку, сзади и четыре выражения лица" loading="lazy" width="1400" height="933"><figcaption>Пик в 3D: лист для моделлера. Сбоку виден утиный клюв. Отсюда можно делать модель в Blender или Tripo, если игра пойдёт в 3D.</figcaption></figure>
+</section>
+
+<section>
+  <div class="eyebrow">Геймплей</div>
+  <h2>Три направления на выбор</h2>
+  <div class="grid3">
+    <div class="card pick"><span class="tag ok">Рекомендую как основу</span><h3>Друг за стеклом</h3><p>Уход и живые реакции. Ребёнок заходит проверить малыша, гладит, кормит, стучит по стеклу. Держит любопытство: что он сегодня выкинет.</p><p class="note">Прототип сделан по этому варианту.</p></div>
+    <div class="card"><span class="tag">Добавить слоем</span><h3>Мастерская</h3><p>Модули меняют поведение: пропеллер даёт полёт (уже в прототипе), магнит на клюв даёт трюк с деталями, проектор показывает созвездия. Покупка видна сразу: робот пробует новую вещь.</p></div>
+    <div class="card"><span class="tag">Следующая версия</span><h3>Гости и походы</h3><p>Как в Neko Atsume: вещь в убежище зовёт робота-гостя, подружишься и он откроется. Как в Finch: утром заряжаешь, он уходит «по проводам телефона» и возвращается с открыткой и деталью.</p></div>
+  </div>
+
+  <h3 style="margin-top:24px">Цикл одного захода</h3>
+  <div class="loop">
+    <span class="chip">Привет у стекла</span><i>→</i><span class="chip">Облачко: чего хочет</span><i>→</i><span class="chip">Уход или мини-игра</span><i>→</i><span class="chip">Винтики</span><i>→</i><span class="chip">Шапка, мебель, модуль</span><i>→</i><span class="chip">Робот пробует вещь</span><i>→</i><span class="chip">Дружба растёт</span><i>→</i><span class="chip">Новый робот</span>
+  </div>
+
+  <h3>Первые три минуты</h3>
+  <ol class="steps">
+    <li><b>0:00–0:20.</b> Тёмный экран, «Кто-то живёт в твоём телефоне». Касание: на лице робота загорается логотип студии, потом глаза. Камера отъезжает, загорается свет в убежище.</li>
+    <li><b>0:20–0:50.</b> Три малыша. Касаешься, каждый здоровается по-своему. Выбираешь, даёшь имя или бросаешь кубик.</li>
+    <li><b>0:50–2:00.</b> Подсказки по одной: погладь, покорми, постучи по стеклу, тыкни много раз, подними за пузико. Каждое действие сразу даёт смешную реакцию.</li>
+    <li><b>2:00–3:00.</b> Первая мини-игра, первые винтики, первая шапка. Робот примеряет её и прыгает от радости.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="eyebrow">Развитие</div>
+  <h2>Зачем возвращаться завтра</h2>
+  <div class="grid2">
+    <div class="card"><h3>Дружба</h3><p>Каждое действие даёт очки дружбы. Уровень открывает новые трюки, подарки и роботов. В прототипе уже есть уровни с праздником и наградой.</p></div>
+    <div class="card"><h3>Вещи с поведением</h3><p>Коврик зовёт танцевать, ночник светит ночью, цветок робот нюхает, проектор рисует звёзды. Любая вещь меняет то, что малыш делает сам.</p></div>
+    <div class="card"><h3>Коллекция из 20</h3><p>Девять роботов открываются за дела, у каждого виден прогресс. Свой голос, свой фирменный трюк, общий дом.</p></div>
+    <div class="card"><h3>Подарки, а не наказания</h3><p>Пока тебя не было, робот нашёл винтики (уже в прототипе). Дальше: поход с открыткой, недельная посылка, первые три дня робот «знакомится» и каждый день показывает новый жест.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Мини-игры</div>
+  <h2>Короткие, по 30–60 секунд, герой в них сам робот</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Игра</th><th>Что делает ребёнок</th><th>Статус</th></tr></thead>
+    <tbody>
+      <tr><td><b>Лови винтики</b></td><td>Водит робота пальцем, тот ловит головой детали, золотые винтики, батарейки, сердечки. Плохих предметов нет</td><td>В прототипе</td></tr>
+      <tr><td><b>Пи-пи-повтори</b></td><td>Робот пищит мелодию, ребёнок повторяет на четырёх кнопках. У кнопок цвет и форма, играть можно без звука</td><td>В прототипе</td></tr>
+      <tr><td><b>Танцы</b></td><td>Музыка, цветные огни, робот танцует в такт. 40 тактов</td><td>В прототипе</td></tr>
+      <tr><td><b>Мячик</b></td><td>Бросаешь пальцем, робот бегает и пинает обратно</td><td>В прототипе</td></tr>
+      <tr><td><b>Почини дорожку</b></td><td>Повернуть 4–6 крупных плиток, чтобы ток дошёл от батарейки до лампы</td><td>Идея</td></tr>
+      <tr><td><b>Прятки в телефоне</b></td><td>Робот прячется за иконками приложений, найди его по писку</td><td>Идея</td></tr>
+      <tr><td><b>Доставка по плате</b></td><td>Провести малыша с посылкой по дорожкам платы мимо пружинок</td><td>Идея</td></tr>
+      <tr><td><b>Театр теней</b></td><td>Двигать фонарик и складывать из теней картинку, она остаётся на стене</td><td>Идея</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="money">
+  <div class="eyebrow">Монетизация</div>
+  <h2>Как у Toca Boca: бесплатная база и разовые наборы</h2>
+  <div class="grid2">
+    <div class="card"><h3>Бесплатно</h3><p>3 робота на выбор, 9 за игру, все мини-игры, уход, дружба, магазин за винтики. Винтики покупать нельзя, только заработать.</p></div>
+    <div class="card"><h3>Платно, только для взрослых</h3><p>Наборы «Космос», «Погода», «Шоу»: роботы, декор, сценки. Покупка за родительским барьером. Цены — гипотеза для проверки: около $2.99 за набор и $7.99 за всё.</p></div>
+  </div>
+  <ul class="tight" style="margin-top:14px">
+    <li><b>Без рекламы.</b> В детской категории Apple сторонняя реклама почти закрыта, в Google Play Families разрешены только сертифицированные SDK. Без рекламы проще пройти оба магазина и получить значок Teacher Approved.</li>
+    <li><b>Никакого давления.</b> Google прямо запрещает эмоционально давить на ребёнка ради покупки. Грустный или голодный робот лечится уходом и игрой, магазин в этот момент не показываем.</li>
+    <li><b>Голос ребёнка не записываем.</b> Если делать «пищит в ответ на голос», робот повторяет только ритм и громкость, саму запись не храним (так проще с COPPA).</li>
+    <li><b>Запасной вариант:</b> Apple Arcade, где уже есть Tamagotchi Adventure Kingdom.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="eyebrow">Производство</div>
+  <h2>Что дальше</h2>
+  <div class="grid2">
+    <div class="card"><h3>Путь 1. Оставить 2D-риг из прототипа</h3><p>Все 20 роботов уже работают как данные: форма головы, цвета, антенна, голос, трюк. Анимации общие. Быстро и дёшево, файл игры весит 277 КБ. Можно перенести в Godot или Unity или оставить веб-обёртку.</p></div>
+    <div class="card"><h3>Путь 2. Перейти в 3D</h3><p>По листу Пика сделать модель, общий риг и анимации на всех. Красивее на витрине, но дороже: 20 моделей, риг, захват движений. Для рига и клипов пригодятся sand3d и AnimForge.</p></div>
+  </div>
+  <h3 style="margin-top:22px">Ближайшие шаги</h3>
+  <ol class="steps">
+    <li>Показать прототип 3–5 детям 5–9 лет без подсказок: что они делают первым, смеются ли над падением, понимают ли облачко с желанием.</li>
+    <li>Выбрать путь 2D или 3D и движок.</li>
+    <li>Музыка: главная тема, мини-игры, колыбельная (Suno). Сейчас в прототипе временный синтезированный бит.</li>
+    <li>Добавить «поход» и недельную посылку, ещё две мини-игры, звуки на ElevenLabs по желанию.</li>
+    <li>Родительский раздел и покупки наборов, затем закрытый тест в Google Play.</li>
+  </ol>
+</section>
+
+<p class="foot">Toysberry Game Studio · «Робогочи» (рабочее название) · прототип v0.1. Прототип: tamagotchi/ в папке проекта, APK: tamagotchi/builds/robogochi-0.1.0.apk.</p>
+</div>

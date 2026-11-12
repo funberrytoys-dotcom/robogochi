@@ -1,0 +1,12 @@
+{
+  "name": "robogochie-tamagotchi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "shots": "node tools/shots.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.64.1"
+  }
+}
