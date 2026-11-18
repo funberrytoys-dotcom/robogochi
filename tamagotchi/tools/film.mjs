@@ -1,5 +1,5 @@
 // Records a short demo video of the game, frame by frame, with its own synthesized sound.
-// node tools/film.mjs [out.mp4]
+// node tools/film.mjs [out.mp4] [--first-words]
 // Time is frozen (Playwright clock) and advanced one video frame at a time, so motion is smooth
 // regardless of machine speed. WebAudio is redirected into an OfflineAudioContext driven by the same
 // clock and rendered at the end, so every squeak lands exactly on its bill flap.
@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = path.resolve(process.argv[2] || path.join(ROOT, '..', 'video', 'robogochi-demo.mp4'));
+const OUT = path.resolve(process.argv[2] || path.join(ROOT, '..', 'video', 'robogochi-0.2-demo.mp4'));
 const PROBE = process.env.PROBE ? path.resolve(process.env.PROBE) : null; // folder: also dump numbered stills
 const W = 432, H = 768, DSF = 2.5, FPS = 30, FR = 1000 / FPS;
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
@@ -33,6 +33,28 @@ const SHIM = String.raw`(() => {
     window.__actx = c; return c;
   }
   window.AudioContext = FakeAC; window.webkitAudioContext = FakeAC;
+  // Speech uses HTMLAudio in the game. Place the same samples on the capture timeline.
+  const clips = new Map();
+  window.__loadSpeech = async () => {
+    const ac = FakeAC();
+    await Promise.all(Object.values(window.ROBO_VOICE).map(async url => {
+      const bytes = await (await fetch(url)).arrayBuffer();
+      clips.set(url, await ac.decodeAudioData(bytes));
+    }));
+  };
+  window.__filmedClips = [];
+  window.Audio = class {
+    constructor(url) { this.url = url; this.playbackRate = 1; this.volume = 1; }
+    async play() {
+      window.__filmedClips.push(this.url);
+      const ac = FakeAC();
+      this.node = ac.createBufferSource(); this.node.buffer = clips.get(this.url);
+      this.node.playbackRate.value = this.playbackRate;
+      const gain = ac.createGain(); gain.gain.value = this.volume;
+      this.node.connect(gain); gain.connect(ac.destination); this.node.start(ac.currentTime);
+    }
+    pause() { if (this.node) this.node.stop(FakeAC().currentTime); }
+  };
   window.__renderAudio = async (t0, t1) => {
     if (!window.__actx) return '';
     const buf = await window.__actx.startRendering();
@@ -165,21 +187,46 @@ const head = () => ev(() => { const h = __rg.Room.robot.headWorld(); return { x:
 const headFn = (dx = 0, dy = 0) => new Function(`const h=__rg.Room.robot.headWorld();return {x:h.x+(${dx}),y:h.y+(${dy})}`);
 
 // ===== scenario =====
-// boot: first tap enables sound (not filmed), then the studio logo lights up on the robot's visor
-await frames(10);
-await tap({ x: W / 2, y: H * 0.6 });
-audioStart = await ev(() => (performance.now() - window.__filmT0) / 1000) + 1 / FPS;
+await page.evaluate(() => window.__loadSpeech());
+await frames(5);
+audioStart = await ev(() => (performance.now() - window.__filmT0) / 1000);
 recording = true; realT = Date.now();
-await jump({ x: -60, y: H * 0.9 });
-await sec(6.4);
-
-// choose
-await cap('Выбери малыша');
-const pik = await ev(() => { const C = __rg.Choose; const r = C.bots.find((b) => b.def.id === 'pik') || C.bots[0]; return { x: r.x, y: r.y - r.px * 0.6 }; });
-await glide(pik, 0.5); await tap(pik); await sec(1.2);
-await glide(await el('#pickBtn'), 0.4); await tapEl('#pickBtn'); await sec(0.9);
-await cap('Дай ему имя');
-await glide(await el('#nameOk'), 0.4); await tapEl('#nameOk');
+await sec(1.8);
+await tapEl('[data-act=letter]'); await sec(0.5);
+await tapEl('[data-act=sleeve]'); await sec(0.8);
+const code = await ev(() => Game.s.parcel.code);
+for (const id of code) { await tapEl('[data-symbol="' + id + '"]'); await sec(0.35); }
+await sec(0.5); await tapEl('[data-act=pull]'); await sec(1.45);
+for (let i=0; i<3; i++) { await tapEl('[data-piece="' + i + '"]'); await sec(0.62); }
+await sec(0.9); await tapEl('[data-act=finish]'); await sec(1.1);
+await tapEl('[data-a=speech]'); await sec(0.7);
+for (const id of ['a','ma','nyam']) {
+  await tapEl('[data-card="' + id + '"]'); await sec(0.75);
+  await tapEl('[data-answer="' + id + '"]'); await sec(0.65);
+  await tapEl('[data-do=again]'); await sec(0.65);
+  await tapEl('[data-answer="' + id + '"]'); await sec(0.85);
+  if (id!=='nyam') { await tapEl('[data-do=library]'); await sec(.45); }
+}
+await tapEl('[data-link=meal]'); await sec(0.85);
+await tapEl('#sheetX'); await sec(0.55);
+if (process.argv.includes('--first-words')) {
+  await tapEl('[data-a=food]'); await sec(.35);
+  const cookie = await el('.food');
+  await ev(() => {
+    window.__filmedClips.length = 0;
+    const toast = document.getElementById('toast');
+    toast.style.setProperty('display', 'flex', 'important');
+  });
+  await jump(cookie); await page.mouse.down();
+  await glide(() => {
+    const r = Room.robot, h = r.headWorld();
+    return { x: h.x, y: h.y + r.px * .3 + 30 };
+  }, .65);
+  await page.mouse.up();
+  await jump({x:-60,y:H*.9}); await sec(2);
+  if (!await ev(() => Game.s.stats.feeds > 0 && window.__filmedClips.includes(ROBO_VOICE.nyam)))
+    throw new Error('The filmed feeding did not produce the learned word.');
+} else {
 await ev(() => { const G = __rg.Game; G.s.hints = { pet: 1, feed: 1, knock: 1, tap: 1, lift: 1, wash: 1, sleep: 1, games: 1, shop: 1 }; G.s.bolts = 160; G.s.demoAll = true; G.save(); UI.bolts(); });
 await sec(0.6);
 await cap('Он живёт в твоём телефоне');
@@ -244,7 +291,7 @@ await jump({ x: -60, y: fx.y }); await sec(1.5);
 
 // shop: propeller hat
 await cap('Шапки и мебель за винтики');
-await tapEl('.act[data-a=shop]'); await sec(0.6);
+await tapEl('#boltsBtn'); await sec(0.6);
 await ev(() => document.querySelector('button[data-i=propeller]').scrollIntoView({ block: 'center' })); await frames(2);
 await glide(await el('button[data-i=propeller]'), 0.35); await tapEl('button[data-i=propeller]'); await sec(0.7);
 await glide(await el('#sheetX'), 0.3); await tapEl('#sheetX');
@@ -266,7 +313,7 @@ await tapEl('#gExit');
 await jump({ x: -60, y: fx.y }); await sec(0.8);
 
 // collection: 20 robots, try a premium one
-await cap('20 роботов-малышей');
+await cap(await ev(() => ROBOTS.length + ' робота в коллекции'));
 await tapEl('.act[data-a=robots]'); await sec(0.7);
 await ev(() => { document.getElementById('sheetBody').scrollTop = 400; }); await sec(0.5);
 await ev(() => document.querySelector('button[data-r=kometa]').scrollIntoView({ block: 'center' })); await sec(0.5);
@@ -283,6 +330,8 @@ for (const dt of [0.55, 0.5, 0.55]) { const h = await head(); await tap({ x: h.x
 await cap(null);
 await ev(() => window.__end(true));
 await sec(3.4);
+
+}
 
 // ---------- finish ----------
 recording = false;
@@ -302,4 +351,6 @@ await new Promise((res, rej) => {
     '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', '-shortest', OUT], { stdio: 'inherit' });
   m.on('close', (c) => (c === 0 ? res() : rej(new Error('mux exit ' + c))));
 });
+fs.unlinkSync(tmpA);
+fs.unlinkSync(tmpV);
 console.log(JSON.stringify({ out: OUT, frames: nFrames, seconds: +dur.toFixed(2), audioBytes: pcm.length, errors: errs }, null, 1));

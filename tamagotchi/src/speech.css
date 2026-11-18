@@ -1,0 +1,74 @@
+/* A pocket voice recorder fitted to the existing game sheet. */
+#sheet.speech-open {
+  color: #302d3c; background: #fff9e8; border: 3px solid #373047;
+  box-shadow: 0 5px 0 #252536, 0 12px 30px #190e3145;
+  max-height: 88%; border-radius: 24px;
+}
+#sheet.speech-open .sheet-head {padding: 11px 13px 6px 16px; color:#302d3c;}
+#sheet.speech-open .sheet-head b {font-size:20px; letter-spacing:-.035em;}
+#sheet.speech-open .sheet-head button {color:#393149;background:#eee7de;width:40px;height:40px;}
+#sheet.speech-open #sheetBody {padding:4px 10px 10px; overscroll-behavior:contain; touch-action:pan-y;}
+.sp-panel {--sp-ink:#303244; font:800 15px/1.25 var(--font,system-ui,sans-serif); color:var(--sp-ink);}
+.sp-panel * {box-sizing:border-box;}
+.sp-panel button {font:inherit; color:inherit; touch-action:manipulation;}
+.sp-panel button:focus-visible {outline:3px solid #985236;outline-offset:1px;position:relative;z-index:1;}
+.sp-panel button:active:not(:disabled) {transform:translateY(2px);}
+.sp-radio {border:2px solid #344449;border-radius:17px;min-height:80px;display:flex;align-items:center;gap:8px;padding:3px 12px 3px 4px;
+  color:#123f3b;background-color:#9de8cf;background-image:radial-gradient(#4ea98473 1px,transparent 1.4px);background-size:7px 7px;box-shadow:inset 0 -5px #70c5a6;}
+.sp-radio canvas {width:63px;height:65px;flex:none;filter:drop-shadow(0 2px 0 #33745940);}
+.sp-radio small,.sp-flash small,.sp-count small {display:block;font-size:11px;line-height:1.1;font-weight:900;}
+.sp-radio h3,.sp-library h3 {margin:2px 0;font-weight:900;letter-spacing:-.025em;line-height:1.1;font-size:clamp(16px,4.8vw,22px);}
+.sp-spectrum {height:14px;display:flex;gap:2px;align-items:center;margin-top:3px;}
+.sp-spectrum i {width:4px;border-radius:3px;background:#2e7366;height:4px;}
+.sp-spectrum i:nth-child(3n+1) {height:9px;}.sp-spectrum i:nth-child(3n+2) {height:12px;}
+.sp-signal .sp-spectrum i {animation:sp-wave .52s ease-in-out infinite alternate;}
+.sp-signal .sp-spectrum i:nth-child(2n) {animation-delay:-.36s;}
+@keyframes sp-wave { to {transform:scaleY(.42);} }
+.sp-count {margin-left:auto;flex:none;width:45px;height:46px;display:grid;align-content:center;text-align:center;color:#efffde;background:#275650;border:2px solid #1d463e;border-radius:11px;}
+.sp-count b {font-size:20px;line-height:1.05;}.sp-count small {font-size:10px;}
+.sp-tabs {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:11px 0 4px;padding:3px;background:#e9e0cd;border-radius:14px;gap:2px;}
+.sp-tabs button {padding:5px 2px;min-height:39px;font-size:14px;border-radius:11px;}
+.sp-tabs button[aria-pressed=true] {background:white;box-shadow:0 2px 0 #c1b59e;}
+.sp-tabs button:disabled {color:#6f6b64;cursor:default;}
+.sp-library {padding:6px 2px 1px;}
+.sp-library p {margin:3px 0;font-size:13px;line-height:1.25;}
+.sp-grid,.sp-choices {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.sp-grid {margin-top:8px;}
+.sp-panel .sp-card,.sp-panel .sp-flash {--sp-paper:#ffe28b;--sp-edge:#cda755;background:var(--sp-paper);border:2px solid var(--sp-ink);box-shadow:inset 0 -4px var(--sp-edge),0 2px 0 var(--sp-ink);border-radius:13px;}
+.sp-panel .sp-g1 {--sp-paper:#ffd2c4;--sp-edge:#e2a99e;}
+.sp-panel .sp-g2 {--sp-paper:#d8eaf8;--sp-edge:#abbfd7;}
+.sp-card {position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:72px;padding:7px 2px 8px;overflow-wrap:anywhere;}
+.sp-card strong {font-size:clamp(22px,6vw,30px);font-weight:900;line-height:1;}
+.sp-card.sp-g2 strong {font-size:clamp(13px,3.6vw,18px);}
+.sp-picture {display:block;width:26px;height:26px;}.sp-picture svg {width:100%;height:100%;}
+.sp-lamps {display:inline-flex;gap:4px;align-items:center;}
+.sp-lamps i {width:8px;height:8px;border:1.5px solid #54565d;border-radius:50%;background:#fff2;}
+.sp-lamps i.lit {background:#2f896d;border-color:#215e4c;}
+.sp-library p.sp-note,.sp-feedback {color:#655f6b;font-size:12px;line-height:1.25;margin:10px 0 0;}
+.sp-exercise {text-align:center;padding:4px 2px 1px;}
+.sp-ex-top {display:flex;align-items:center;justify-content:space-between;}
+.sp-back {text-align:left;min-height:41px;color:#526068!important;padding:0 7px!important;font-size:13px!important;}
+.sp-flash {max-width:190px;min-height:72px;margin:0 auto 7px;display:grid;align-content:center;justify-content:center;gap:4px;transform:rotate(-2deg);}
+.sp-flash strong {font-size:clamp(28px,7.4vw,40px);line-height:1.05;}
+.sp-task {font-size:15px;margin:11px 0 8px;line-height:1.3;}
+.sp-choices button,.sp-main,.sp-listen {display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;}
+.sp-choices button {font-size:clamp(14px,4vw,20px);min-height:44px;background:#fff;border:2px solid #494354;box-shadow:0 2px 0 #494354;padding:3px;}
+.sp-choices button:disabled {opacity:.45;box-shadow:none;}
+.sp-main {min-height:46px;min-width:68%;padding:6px 14px!important;background:#b3ebcc!important;border:2px solid #30463b!important;box-shadow:0 2px 0 #30463b;}
+.sp-listen {min-height:41px;font-size:13px!important;color:#416958!important;margin:5px auto 0!important;}
+.sp-panel button svg {width:18px;height:18px;}.sp-panel .sp-picture svg {width:26px;height:26px;}
+.sp-feedback:empty {display:none;}
+@media (max-height:620px) {
+  #sheet.speech-open {max-height:94%;}
+  .sp-radio {min-height:60px;}.sp-radio canvas {width:48px;height:50px;}.sp-card {min-height:56px;}
+}
+@media (prefers-reduced-motion:reduce) {.sp-signal .sp-spectrum i {animation:none;}}
+
+.sp-panel .sp-tabs .sp-lock {width:12px;height:12px;vertical-align:-1px;}
+.sp-associate {margin:12px 0 0;padding:9px 6px 2px;border-top:1px dashed #bdad92;}
+.sp-associate h4 {font-size:14px;margin:0 0 7px;}
+.sp-associate > div {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;}
+.sp-associate button {min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px 0;border:1.5px solid #c6beaa;border-radius:11px;background:#fffdf3;font-size:clamp(10px,2.8vw,12px);line-height:1.1;}
+.sp-associate button[aria-pressed=true] {background:#b8edd1;border-color:#376454;}
+.sp-associate button span {display:grid;place-items:center;border-radius:7px;background:#6e6482;width:26px;height:24px;}
+.sp-associate button span svg {width:21px;height:21px;}

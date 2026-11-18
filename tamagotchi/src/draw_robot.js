@@ -673,6 +673,34 @@ function drawTopper(ctx, def, P, w, h, lw, ax, topY) {
     tipFn(tx, ty);
   };
   switch (tp) {
+    case 'chimney': {
+      ctx.translate(-0.12 * w, 0.015);
+      ctx.rotate(P.ant * 0.32);
+      ctx.beginPath(); rrect(ctx, -0.065, -0.17, 0.13, 0.19, 0.035);
+      fillOutlined(ctx, shadeFill(ctx, c.limb, -0.17, 0), darken(c.limb, 0.5), lw);
+      ctx.beginPath(); rrect(ctx, -0.095, -0.21, 0.19, 0.067, 0.025);
+      fillOutlined(ctx, shadeFill(ctx, c.shell2, -0.21, -0.14), darken(c.shell2, 0.55), lw);
+      for (let i = 0; i < 2; i++) {
+        const phase = (t * 0.54 + i / 2) % 1;
+        ctx.fillStyle = rgba('#B8EDFC', 0.85 * (1 - phase));
+        ctx.beginPath(); circ(ctx, Math.sin(phase * 5) * 0.045, -0.23 - phase * 0.17, 0.026 + phase * 0.033); ctx.fill();
+      }
+      break;
+    }
+    case 'petals': {
+      ctx.translate(0, h * 0.04);
+      ctx.rotate(P.ant * 0.4 + Math.sin(t * 2) * 0.045);
+      for (let i = -2; i <= 2; i++) {
+        ctx.save(); ctx.rotate(i * 0.47);
+        ctx.beginPath(); ell(ctx, 0, -0.12, 0.078, 0.135);
+        fillOutlined(ctx, shadeFill(ctx, i % 2 ? '#FFABAD' : c.shell2, -0.23, 0.015), '#B95F78', lw * 0.75);
+        ctx.beginPath(); ell(ctx, -0.018, -0.16, 0.016, 0.044, 0.1); ctx.fillStyle = '#FFD7C5'; ctx.fill();
+        ctx.restore();
+      }
+      ctx.beginPath(); ell(ctx, 0, -0.012, 0.097, 0.057);
+      fillOutlined(ctx, '#FFE079', '#AD7535', lw * 0.75);
+      break;
+    }
     case 'antenna':
       stem(0.2, (x, y) => {
         ctx.beginPath(); circ(ctx, x, y, 0.052);

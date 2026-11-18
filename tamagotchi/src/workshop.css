@@ -1,0 +1,103 @@
+.ws-game {
+  --paper: #fff5da;
+  --night: #293d40;
+  --edge: #bb794b;
+  --accent: #f6c458;
+  --accent-ink: #352c28;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(8px, 2.4vh, 23px);
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--night);
+  background:
+    radial-gradient(ellipse at 12% 18%, #fff9de 0%, transparent 43%),
+    repeating-linear-gradient(0deg, #ebd39a30 0px 2px, transparent 2px 5px),
+    #f2e5bf;
+  font: 800 15px/1.25 var(--font);
+  text-shadow: none;
+}
+.ws-game.ws-bloom {
+  --night: #fff3ca;
+  --paper: #23374a;
+  --edge: #4a6680;
+  --accent: #a4efd8;
+  --accent-ink: #17364a;
+  background:
+    radial-gradient(ellipse at 15% 35%, #344269 0%, transparent 56%),
+    linear-gradient(160deg, #1d2240, #172c3b 85%);
+}
+.ws-game .ws-top, .ws-game .ws-bottom, .ws-game .ws-heading {
+  width: min(100%, 430px);
+}
+.ws-game .ws-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ws-game .ws-back, .ws-game .ws-hint, .ws-game .ws-home {
+  color: inherit;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--edge);
+  border-radius: 14px;
+  font: inherit;
+  background: var(--paper);
+}
+.ws-game .ws-back { font-size: 19px; min-width: 44px; padding: 7px 10px; }
+.ws-game .ws-count { display: flex; align-items: center; gap: 5px; padding: 6px 2px; }
+.ws-game .ws-token { display: block; width: 22px; height: 14px; border: 2px solid var(--edge); border-radius: 4px; }
+.ws-game .ws-token.is-now { background: var(--accent); }
+.ws-game .ws-token.is-done { background: #69b59a; border-color: #417c69; }
+.ws-bloom .ws-token { border-radius: 65% 35% 65% 35%; width: 16px; height: 16px; }
+.ws-game .ws-heading { text-align: center; }
+.ws-game h2 { margin: 0; color: inherit; font: 900 clamp(23px, 6.5vw, 34px)/1.08 var(--font); letter-spacing: -.035em; }
+.ws-game .ws-progress { margin: 5px 0 0; font-size: 14px; opacity: .82; }
+.ws-game .ws-playfield {
+  position: relative;
+  width: min(100%, 54vh, 420px);
+  aspect-ratio: 1;
+  flex: none;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 2px solid var(--edge);
+  box-shadow: 0 5px 0 var(--edge), 0 10px 20px #27363819;
+}
+.ws-game .ws-art { display: block; width: 100%; height: 100%; }
+.ws-game .ws-tile {
+  position: absolute;
+  border: 0;
+  background: transparent;
+  border-radius: 12%;
+}
+.ws-game .ws-tile:focus-visible { outline: 4px solid #164a81; outline-offset: -5px; }
+.ws-game .ws-bottom { display: grid; justify-items: center; gap: 9px; text-align: center; }
+.ws-game .ws-say { margin: 0; min-height: 2.5em; max-width: 29ch; font: 850 clamp(15px, 4vw, 19px)/1.25 var(--font); }
+.ws-game .ws-keys { display:flex; gap:9px; justify-content:center; flex-wrap:wrap; }
+.ws-game .ws-big { color: var(--accent-ink); min-height: 48px; padding: 12px 22px; border-radius: 16px; background: var(--accent); box-shadow: 0 4px 0 #333e4a; font: 900 17px var(--font); }
+.ws-game button:active { transform: translateY(1px); }
+.ws-game .ws-big:disabled { opacity: .65; }
+@media (max-height: 580px) {
+  .ws-game { gap: 5px; padding: 5px 8px; }
+  .ws-game .ws-playfield { width: min(100%, 51vh); }
+  .ws-game .ws-top { position: absolute; left: 8px; right: 8px; top: 6px; width: auto; }
+  .ws-game .ws-back { min-height: 35px; min-width: 35px; }
+  .ws-game .ws-progress { font-size: 12px; }
+  .ws-game .ws-tile { min-height: 0; }
+  .ws-game h2 { font-size: 20px; }
+  .ws-game .ws-bottom { gap: 3px; }
+}
+
+.ws-game .ws-heading { display: flex; align-items: center; justify-content: center; gap: 10px; text-align: left; }
+.ws-game .ws-mate { display: block; flex: none; height: 64px; width: 61px; border-radius: 45% 45% 38% 38%; background: #fff5cd; border: 1px solid #b5885e80; }
+.ws-bloom .ws-mate { background: #3d576a; border-color: #6f8c9e; }
+@media (max-width: 345px), (max-height: 580px) {
+  .ws-game .ws-mate { width: 42px; height: 44px; }
+  .ws-game .ws-heading { gap: 6px; }
+}

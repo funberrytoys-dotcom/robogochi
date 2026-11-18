@@ -266,7 +266,7 @@ const Games = {
       FX.add({ kind: 'note', x: h.x + rand(-60, 60), y: h.y - 40, vy: -60, vx: rand(-20, 20), life: 1.2, col: pick(['#FFE36B', '#FF8AD8', '#7FD3FF', '#7BE07A']) });
       if (beats >= 40) {
         Snd.Music.stop(); Room.party = 0; r.tiltBias = 0; r.headTarget.rot = 0;
-        Game.stat('dances'); Game.need('fun', 25); Game.friend(3);
+        Game.stat('dances'); SpeechLab.react('play'); Game.need('fun', 25); Game.friend(3);
         r.play(B.celebrate(r), 3);
       }
     });

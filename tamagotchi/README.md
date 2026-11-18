@@ -1,4 +1,12 @@
-# Робогочи · прототип тамагочи v0.1
+# Робогочи · 0.2.0
+
+[Играть офлайн](dist/robogochie.html) · [APK 0.2.0](https://github.com/funberrytoys-dotcom/robogochi/releases/download/v0.2.0/robogochi.apk) · [Передача и проверки](../HANDOFF-2026-11-18.md)
+
+Для свежей сборки выполни `node build.mjs`. Для Android после этого выполни `python tools/build_android.py 0.2.0`. Публикуемый каталог собирает `node tools/pages.mjs`. Короткую демонстрацию записывает `node tools/film.mjs first-words.mp4 --first-words`.
+
+Игра начинается с посылки. При повторном запуске открывается текущий этап или комната. Школа речи открывается кнопкой «Речь», паспорт дружбы — по имени питомца, магазин — по винтикам.
+
+## Архив описания прототипа 0.1
 
 Toysberry Game Studio · 12 ноября 2026
 

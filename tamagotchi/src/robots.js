@@ -7,7 +7,7 @@ const RARITY = [
   { name: 'Легендарный', icon: '★', col: '#FFB800' },
 ];
 
-// 20 robots. head.shape: dome | round | box | drop | gem | pot | cloud
+// Robot collection. head.shape: dome | round | box | drop | gem | pot | cloud
 // topper: what sticks out of the head; deco: surface pattern; bill: duck bill (Microduck DNA) or a screen mouth
 // voice: base pitch Hz, waveform, speed — every robot squeaks in its own voice
 const ROBOTS = [
@@ -74,6 +74,18 @@ const ROBOTS = [
     head: { shape: 'pot', w: 0.92, h: 0.7 }, bill: false, eyes: 'pair', topper: 'sprout', deco: 'none', trait: 'grow',
     col: { shell: '#E58B5A', shell2: '#7BC74D', visor: '#2B1A14', eye: '#C9FF9E', body: '#8CCB5E', limb: '#4D6B35', foot: '#E58B5A', cheek: '#FFB28A' },
     voice: { base: 880, wave: 'triangle', speed: 0.9 } },
+
+  // --- workshop friends ---
+  { id: 'gudok', name: 'Гудок', rarity: 1, access: 'earn', unlock: 'Доставь 3 письма в «Почтовом экспрессе»', goal: { stat: 'lettersDelivered', n: 3 },
+    about: 'Почтовый паровозик. Насвистывает в медную трубу, когда привозит письмо.',
+    head: { shape: 'box', w: 1.0, h: 0.64 }, bill: true, eyes: 'pair', topper: 'chimney', deco: 'rivets', trait: 'dash',
+    col: { shell: '#E95839', shell2: '#FFD45F', visor: '#253846', eye: '#BAFFEC', body: '#2D847F', limb: '#344956', foot: '#EF6647', cheek: '#FFD4A0' },
+    voice: { base: 780, wave: 'triangle', speed: 1.05 } },
+  { id: 'lutik', name: 'Лютик', rarity: 1, access: 'earn', unlock: 'Раскрой 3 цветка в «Лунной теплице»', goal: { stat: 'flowersGrown', n: 3 },
+    about: 'Сонный садовник с лепестками вместо шляпки. Потягивается к лунному свету.',
+    head: { shape: 'round', w: 0.9, h: 0.66 }, bill: false, eyes: 'pair', topper: 'petals', deco: 'none', trait: 'grow',
+    col: { shell: '#F6CE58', shell2: '#FE8BA3', visor: '#40334B', eye: '#FFF2AF', body: '#86CF91', limb: '#417365', foot: '#FFAC86', cheek: '#FF8B99' },
+    voice: { base: 970, wave: 'sine', speed: 0.9 } },
 
   // --- eight premium (packs for the parent shop) ---
   { id: 'kosmo', name: 'Космо', rarity: 2, access: 'premium', pack: 'Космос',

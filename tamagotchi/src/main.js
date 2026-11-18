@@ -13,7 +13,7 @@ const Game = {
   s: null, scene: null, t: 0, saveT: 0,
   fresh() {
     return {
-      v: 1, robot: 'pik', name: 'Пик', started: false,
+      v: 2, robot: 'pik', name: 'Пик', started: false,
       needs: { food: 58, energy: 78, clean: 62, fun: 50 },
       bolts: 30, xp: 0, level: 1,
       stats: { catchGames: 0, boltsTotal: 0, washes: 0, dances: 0, sleeps: 0, kicks: 0, melodies: 0, days: 1, feeds: 0, level: 1 },
@@ -29,18 +29,26 @@ const Game = {
     // time away: needs drift, but never to zero; a little gift waits
     const away = clamp((Date.now() - this.s.last) / 60000, 0, 600);
     this.away = away;
+    this.s.v = 2;
     if (s && away > 1) {
       for (const k in DECAY) this.s.needs[k] = Math.max(Math.min(this.s.needs[k], 22), this.s.needs[k] - DECAY[k] * away * 0.5);
     }
     if (this.s.day !== today()) { this.s.stats.days += 1; this.s.day = today(); }
     Snd.on = this.s.sound;
   },
-  save() { this.s.last = Date.now(); Store.save(this.s); },
+  save() { if (this.resetting) return; this.s.last = Date.now(); Store.save(this.s); },
   get def() { return ROBOT_BY_ID[this.s.robot] || ROBOTS[0]; },
   need(k, d) { const n = this.s.needs; n[k] = clamp(n[k] + d, 0, 100); UI.needs(); },
   lowestNeed() { let best = null; for (const k in this.s.needs) if (!best || this.s.needs[k] < best.v) best = { k, v: this.s.needs[k] }; return best; },
-  stat(k, n = 1) { this.s.stats[k] = (this.s.stats[k] || 0) + n; this.checkUnlocks(); },
-  friend(n) {
+  stat(k, n = 1) {
+    const before = this.s.stats[k] || 0;
+    this.s.stats[k] = before + n;
+    const stamp = Passport.stamps.find(([key, goal]) => key === k && before < goal && before + n >= goal);
+    if (stamp) UI.toast('Новая марка «' + stamp[2] + '»', stamp[4]);
+    this.checkUnlocks();
+  },
+  friend(n, context) {
+    if (['pet', 'ball', 'feed', 'wash'].includes(context)) SpeechLab.react(context);
     const s = this.s; s.xp += n;
     const need = 10 + s.level * 6;
     if (s.xp >= need) {
@@ -53,10 +61,12 @@ const Game = {
     UI.friend();
   },
   addBolts(n, x, y) {
+    // Credit the save immediately. Flying bolts are feedback and may be interrupted.
+    this.s.bolts += n; this.s.stats.boltsTotal += n;
+    UI.bolts(true); this.checkUnlocks(); this.save();
     const tgt = UI.boltTarget();
     const k = Math.min(n, 10);
     for (let i = 0; i < k; i++) {
-      const last = i === k - 1, give = last ? n - (k - 1) : 1;
       setTimeout(() => {
         const p = FX.add({ kind: 'fly', x: x + rand(-20, 20), y: y + rand(-20, 20), life: 0.7, s: 1.4, layer: 1 });
         const sx = p.x, sy = p.y, cx = (sx + tgt.x) / 2 + rand(-60, 60), cy = Math.min(sy, tgt.y) - 80;
@@ -65,7 +75,7 @@ const Game = {
         const step = () => {
           const k2 = clamp((performance.now() - t0) / 700, 0, 1), e = easeIn(k2);
           p.x = lerp(lerp(sx, cx, e), lerp(cx, tgt.x, e), e); p.y = lerp(lerp(sy, cy, e), lerp(cy, tgt.y, e), e);
-          if (k2 < 1) requestAnimationFrame(step); else { this.s.bolts += give; this.s.stats.boltsTotal += give; Snd.sfx.coin(1 + rand(0.1)); UI.bolts(true); this.checkUnlocks(); }
+          if (k2 < 1) requestAnimationFrame(step); else Snd.sfx.coin(1 + rand(0.1));
         };
         requestAnimationFrame(step);
       }, i * 70);
@@ -88,12 +98,12 @@ const Game = {
     }
   },
   hint(done) {
-    const order = ['pet', 'feed', 'knock', 'tap', 'lift'];
+    const order = ['pet', 'speech', 'feed', 'knock', 'tap', 'lift'];
     if (done) this.s.hints[done] = true;
     const next = order.find((k) => !this.s.hints[k]);
     UI.hint(next);
   },
-  setScene(sc, ...a) { if (this.scene && this.scene.leave) this.scene.leave(); this.scene = sc; if (sc.enter) sc.enter(...a); UI.scene(sc.name); },
+  setScene(sc, ...a) { SpeechLab.stop(); if (this.scene && this.scene.leave) this.scene.leave(); this.scene = sc; if (sc.enter) sc.enter(...a); UI.scene(sc.name); },
   update(dt) {
     const s = this.s;
     if (this.scene === Room && s.started) {
@@ -269,6 +279,7 @@ const Choose = {
 const Input = { id: null };
 function localXY(e) { const r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
 cv.addEventListener('pointerdown', (e) => {
+  if (!UI.$('sheet').hidden) { UI.closeSheet(); return; }
   Snd.init();
   const p = localXY(e);
   Input.id = e.pointerId;
@@ -288,7 +299,11 @@ const endPointer = (e) => {
 };
 window.addEventListener('pointerup', endPointer);
 window.addEventListener('pointercancel', endPointer);
-document.addEventListener('visibilitychange', () => { if (document.hidden && Game.s) Game.save(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && Game.s) { SpeechLab.stop(); Game.save(); } });
+window.addEventListener('pagehide', () => { if (Game.s) Game.save(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && window.__rgBack) window.__rgBack();
+});
 
 // ---------------- resize & loop ----------------
 function resize() {
@@ -318,8 +333,12 @@ function frame(now) {
   if (World.shakeAmt > 0.2) { ctx.translate(rand(-1, 1) * World.shakeAmt, rand(-1, 1) * World.shakeAmt); World.shakeAmt *= 0.86; } else World.shakeAmt = 0;
   if (sc && sc.draw) sc.draw(ctx);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  FX.draw(ctx, 1);
-  drawGlass(ctx);
+  // DOM scenes paint their own surface. Repeated reflections on an uncleared
+  // backing canvas would become opaque during the parcel's fade into the room.
+  if (sc !== Parcel && sc !== Workshop) {
+    FX.draw(ctx, 1);
+    drawGlass(ctx);
+  }
   requestAnimationFrame(frame);
 }
 // glass of the phone: soft reflection and rounded inner frame
@@ -340,19 +359,19 @@ function boot() {
   resize();
   Room.setRobot(Game.def);
   Room.ensureToys();
-  const q = new URLSearchParams(location.search);
-  if (q.get('skip') && Game.s.started) Game.setScene(Room);
-  else if (q.get('skip')) { Game.setScene(Choose); }
-  else Game.setScene(Boot);
-  window.__rg = { Game, Room, World, B, Boot, Choose, Games: window.Games };
+  Room.greetOnEnter = Game.s.started;
+  Game.setScene(Game.s.started ? Room : Parcel);
+  window.__rg = { Game, Room, World, B, Boot, Choose, Parcel, SpeechLab, Workshop, Games: window.Games };
   // Android shell hooks: Back closes a sheet / leaves a mini-game first; leaving the app saves and mutes
   window.__rgBack = () => {
+    if (Game.scene === Workshop) { Workshop.exit(); return 'stay'; }
+    if (Game.scene === Parcel && Game.s.started) { Game.setScene(Room); return 'stay'; }
     if (!UI.$('sheet').hidden) { UI.closeSheet(); return 'stay'; }
     if (!UI.$('tray').hidden) { UI.$('tray').hidden = true; return 'stay'; }
     if (Game.scene && (Game.scene.name === 'catch' || Game.scene.name === 'simon')) { Games.exit(); return 'stay'; }
     Game.save(); return 'exit';
   };
-  window.__rgAppPause = () => { Game.save(); Snd.Music.stop(); };
+  window.__rgAppPause = () => { SpeechLab.stop(); Game.save(); Snd.Music.stop(); };
   window.__rgAppResume = () => { Snd.init(); };
   requestAnimationFrame(frame);
 }

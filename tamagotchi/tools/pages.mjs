@@ -43,7 +43,7 @@ for (const f of fs.readdirSync(path.join(P, 'concept-claude', 'img'))) fs.copyFi
 
 // game
 let game = fs.readFileSync(path.join(T, 'dist', 'robogochie.html'), 'utf8');
-game = game.replace(/<\/title>/, `</title>${og('Робогочи · играть', 'Прототип: погладь, покорми и помой робота-малыша. Лучше открывать с телефона.', SITE + 'play/')}`);
+game = game.replace(/<\/title>/, `</title>${og('Робогочи · играть', 'Открой посылку Чико, собери робота и научи его первым словам.', SITE + 'play/')}`);
 fs.writeFileSync(path.join(D, 'play', 'index.html'), game);
 
 // video

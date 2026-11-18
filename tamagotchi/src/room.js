@@ -29,12 +29,29 @@ const World = {
 };
 
 // ---------------- background (pre-rendered) ----------------
+const roomArt = new Image();
+roomArt.onload = () => { World.bgDirty = true; };
+roomArt.src = window.ROOM_ART;
+
 function renderRoomBg(owned) {
   const W = World.W, H = World.H, ft = World.floorTop, fb = World.floorBottom;
   const c = document.createElement('canvas');
   c.width = Math.round(W * DPR); c.height = Math.round(H * DPR);
   const g = c.getContext('2d');
   g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  if (roomArt.naturalWidth) {
+    const iw = roomArt.naturalWidth, ih = roomArt.naturalHeight;
+    const seam = Math.round(ih * 0.49);
+    const visible = Math.min(iw, (W / ft) * seam * 1.15);
+    const left = (iw - visible) / 2;
+    g.drawImage(roomArt, left, 0, visible, seam, 0, 0, W, ft);
+    g.drawImage(roomArt, left, seam, visible, ih - seam, 0, ft, W, H - ft);
+    if (owned.poster) {
+      g.save(); g.translate(W * 0.78, ft * 0.87); g.rotate(-0.055);
+      drawFurniturePreview(g, 'poster', W * 0.16, ft * 0.13); g.restore();
+    }
+    return c;
+  }
   // wall
   let gr = g.createLinearGradient(0, 0, 0, ft);
   gr.addColorStop(0, '#9E88E8'); gr.addColorStop(1, '#C8B4F6');
@@ -305,11 +322,13 @@ const Room = {
     if (this.greetOnEnter) {
       this.greetOnEnter = false;
       r.play(B.greet(r), 2, 'greet');
+      SpeechLab.react('hello');
       if (Game.away > 20) setTimeout(() => { UI.toast(`Пока тебя не было, ${Game.s.name} нашёл 5 винтиков!`, 'bolt'); Game.addBolts(5, r.x, r.y - r.px); }, 1800);
       setTimeout(() => Game.hint(), 2500);
     }
   },
   switchRobot(def) {
+    SpeechLab.stop();
     const old = this.robot, x = old.x, y = old.y;
     FX.burst('spark', x, y - old.px * 0.7, 14, { min: 80, max: 220, p: { life: 0.8, col: '#FFFFFF' } });
     FX.burst('dust', x, y - old.px * 0.4, 8, { min: 40, max: 120, p: { life: 0.7, col: 'rgba(255,255,255,0.7)' } });
@@ -532,11 +551,12 @@ const Room = {
     const r = this.robot;
     if (r.mode === 'sleep') { this.wake(false); return; }
     r.stop(); r.mode = 'stand'; r.play(B.sleep(r), 3, 'sleep');
-    Game.stat('sleeps');
+    Game.stat('sleeps'); SpeechLab.react('sleep');
   },
   wake(early) {
     const r = this.robot;
     if (!r.sleeping && r.coName !== 'sleep') return;
+    SpeechLab.react('wake');
     r.wokeEarly = early && Game.s.needs.energy < 60;
     r.sleeping = false; r.expr = null;
     Snd.sfx.lightOn();
