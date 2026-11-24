@@ -141,6 +141,7 @@
       });
     }
     function perform(id) {
+      api.onPerform?.();
       animate(id); sound('sparkle'); say(tricks.find(t=>t.id===id).effect);
     }
     function lesson(id) {

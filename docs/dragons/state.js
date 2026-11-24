@@ -1,7 +1,7 @@
 (() => {
   window.groveAsset=path=>window.GROVE_FILES?.[path]||path;
   const showcase=new URLSearchParams(location.search).get('showcase')==='grove';
-  const key = 'toysberry.dragon-tree.'+(showcase?'showcase.':'')+'v1';
+  const key = 'toysberry.dragon-tree.'+(showcase?'showcase.':new URLSearchParams(location.search).get('journey')==='nest'?'first-bough.':'')+'v1';
   const names = ['Листик','Искорка','Капля','Слива','Зорька','Лучик'];
   const families = ['Цветущий','Огненный','Росистый','Лунный','Коралловый','Солнечный'];
   const ages = ['Малыш','Подросток','Большой дракон'];

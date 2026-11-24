@@ -46,17 +46,10 @@
   $('wallet').onclick=()=>openMenu('shop');
   $('menu').innerHTML=menu.map(([key,name,icon,c1,c2])=>'<button class="nav-btn" data-page="'+key+'" style="--tile:'+c1+';--tile2:'+c2+'"><i>'+glyph(icon)+'</i><span>'+name+'</span></button>').join('');
   $('menu').onclick=e=>{const b=e.target.closest('[data-page]');if(b)openMenu(b.dataset.page);};
-  for(let i=0;i<29;i++){const dot=document.createElement('i');dot.style.cssText='left:'+((i*47+13)%98)+'%;top:'+((i*31+17)%84+5)+'%;animation-delay:'+(-i*.41)+'s';$('motes').append(dot);}
+
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
   if(matchMedia('(pointer:fine)').matches&&!reduced.matches){
     $('game').addEventListener('pointermove',e=>{if(!overlay.hidden)return;$('game').style.setProperty('--mx',((e.clientX/innerWidth-.5)*7)+'px');$('game').style.setProperty('--my',((e.clientY/innerHeight-.5)*4)+'px');});
-  }
-  function renderResidents(){
-    const perches=[[23.6,44.4],[74.8,53.2],[64,29.7],[68,86],[33,87],[81,92],[16.5,43],[86,51]];
-    const others=s.dragons.filter(d=>d.id!==s.focus);
-    $('residents').innerHTML=others.slice(0,perches.length).map((d,i)=>{
-      const [x,y]=perches[i];return '<button class="perch" data-friend="'+d.id+'" title="'+escapeHTML(d.name)+'" aria-label="Позвать '+escapeHTML(d.name)+'" style="left:'+x+'%;top:'+y+'%;width:'+(i<3?14:10)+'%"><img src="'+sprite(d.species,d.stage,d.sleeping?'sleep':'idle')+'" alt=""></button>';
-    }).join('');
   }
   $('residents').onclick=e=>{const b=e.target.closest('[data-friend]');if(b&&!hatchBusy){s.focus=b.dataset.friend;save();render();sound('pet');react('♥');}};
   function render(){
@@ -64,12 +57,10 @@
     if(!d&&!egg){s.focus=s.eggs.length?'egg':s.dragons[0]?.id;if(s.focus){save();return render();}return;}
     $('balance').textContent=s.coins;
     $('ornaments').innerHTML=s.equipped.map(id=>'<img class="decor-'+id+'" src="'+groveAsset('assets/decor/'+id+'.webp')+'" alt="">').join('');
-    renderResidents();hero.className=egg?'egg warm-'+egg.warmth:['baby','teen','adult'][d.stage]+(d.sleeping?' sleep':'');
+    Habitat.refresh();hero.className=egg?'egg warm-'+egg.warmth:['baby','teen','adult'][d.stage]+(d.sleeping?' sleep':'');
     const src=egg?groveAsset('assets/grove-v2/egg.webp'):sprite(d.species,d.stage,d.sleeping?'sleep':'idle');
     if($('hero-img').getAttribute('src')!==src)$('hero-img').src=src;
     hero.setAttribute('aria-label',egg?'Согреть яйцо':'Погладить дракона · '+d.name);
-    $('chapter').textContent=egg?(s.dragons.length?'НОВОЕ ЯЙЦО':'ПЕРВОЕ ГНЕЗДО'):'МОЯ РОЩА';
-    $('location').textContent=egg?'Лесная роща':s.dragons.length+' '+plural(s.dragons.length,['дракон','дракона','драконов'])+' на древе';
     if(egg){
       const titles=['Кто-то внутри…','Яйцо шевелится','Скорлупа трещит'];
       const hints=['Согрейте яйцо ладонью.','Коснитесь его ещё раз.','Помогите дракону выбраться.'];
@@ -85,7 +76,7 @@
     if(!activeEgg()||hatchBusy)return;
     const hatch=Grove.warm();
     if(!hatch){render();sound('egg');bounce();react(activeEgg().warmth===1?'✧':'✧ ✧');return;}
-    hatchBusy=true;sound('hatch');render();splitShell();bounce();react('✦');
+    hatchBusy=true;Branches.event('hatch');sound('hatch');render();GroveAir.stir(hero);splitShell();bounce();react('✦');
     setTimeout(()=>{hatchBusy=false;if(overlay.hidden)arrival(hatch);},970);
   }
   function arrival(d){
@@ -107,7 +98,7 @@
     const item=change[action];if(!item)return;
     const [stat,amount,fx,words]=item,before=d.needs[stat];
     d.needs[stat]=Math.min(100,before+amount);if(before<96)d.xp+=2;
-    save();render();sound(fx);bounce();react(words);
+    save();if(action==='feed'||action==='pet')Branches.event('care');render();sound(fx);bounce();react(words);GroveAir.stir(hero);
     flourish({feed:'berry',wash:'drop',pet:'heart'}[action],{feed:'#f9b4ae',wash:'#9feef3',pet:'#ffbecd'}[action]);
     if(d.stage===0 && (action==='pet'||action==='feed')){
       clearTimeout(expressionTimer);$('hero-img').src=sprite(d.species,d.stage,'happy');
@@ -187,9 +178,10 @@
     if(!d){toast('Сначала помогите дракону вылупиться.');bounce();return;}
     if(d.sleeping){toast('Разбудите дракона перед занятием.');return;}
     s.focus=d.id;save();render();modal(kind==='school'?'Школа драконов':'Лесные игры');
-    cleanup=DragonActivities.open(kind,{root:panel,dragon:d,sprite:sprite(d.species,d.stage),sound,onClose:close,onReward:({coins=0,xp=0,trick,phrase})=>{
+    cleanup=DragonActivities.open(kind,{root:panel,dragon:d,sprite:sprite(d.species,d.stage),sound,onClose:close,onPerform:()=>Branches.event('lesson'),onReward:({coins=0,xp=0,trick,phrase})=>{
       if(trick&&Object.hasOwn(d.tricks,trick))return;
       if(trick)d.tricks[trick]=phrase;
+      Branches.event(trick?'lesson':'game');
       s.coins+=coins;d.xp+=xp;d.needs.fun=Math.min(100,d.needs.fun+8);save();render();
     }});
   }
@@ -205,6 +197,8 @@
     }
   });
   const entry=ToyQR.token(location.href);if(entry){const problem=Grove.redeem(entry);toast(problem||'Яйцо вашей игрушки в гнезде.');}
+  Branches.initialize(Grove);
+  window.addEventListener('grove-branches-changed',()=>{render();GroveAir.stir(hero);});
   audioUI();render();
   setInterval(()=>{Grove.tick(document.hidden);save();if(overlay.hidden&&!hatchBusy&&!document.activeElement?.closest('#dock'))render();},15000);
   document.addEventListener('visibilitychange',()=>{Grove.tick(true);save();});

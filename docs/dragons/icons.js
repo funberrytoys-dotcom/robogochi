@@ -18,6 +18,7 @@
     close:'<path d="m6 6 12 12M18 6 6 18"/>', arrow:'<path d="m9 5 7 7-7 7"/>',
     check:'<path d="m4 12 5 5L20 6"/>', spark:'<path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2Z"/>',
     sun:'<circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/>',
+    overview:'<path d="M3 9V4h5m8 0h5v5m0 6v5h-5m-8 0H3v-5"/><path d="M12 17v-4m-4 0 4-7 4 7Z"/>',
     camera:'<path d="M3 7h5l2-3h5l2 3h4v13H3Z"/><circle cx="12" cy="13" r="4"/>',
     leaf:'<path d="M4 20C3 10 7 3 21 3c0 13-7 17-14 15m-3 3L16 9"/>',
     lamp:'<path d="M9 5a3 3 0 0 1 6 0M6 7h12l-2 12H8Zm0 0 3-2h6l3 2M9 21h6"/><path d="M12 10c-3 3-2 5 0 5 2 0 2-2 0-5Z"/>',

@@ -1,0 +1,12 @@
+Фоновая музыка — Dragon in the Leaves, файл предоставлен автором проекта.
+
+Игровые сигналы «Древа драконов»
+
+Сэмплы акустического рояля: Salamander Grand Piano v3, Alexander Holm.
+Публикация библиотеки и адаптация FLAC/SFZ: sfzinstruments, kinwie.
+https://github.com/sfzinstruments/SalamanderGrandPiano
+Оригинальная запись: https://archive.org/details/SalamanderGrandPianoV3
+Лицензия сэмплов: Creative Commons Attribution 3.0 Unported.
+https://creativecommons.org/licenses/by/3.0/
+
+Для этой игры сэмплы тихой динамики были транспонированы, обработаны мягкой огибающей и фильтром, а затем сведены в короткие игровые звуковые фразы. Исходная библиотека не распространяется в составе игры.

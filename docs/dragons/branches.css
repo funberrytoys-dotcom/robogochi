@@ -1,0 +1,47 @@
+#guide {
+  position: absolute;
+  z-index: 4;
+  top: var(--guide-top, clamp(117px, 17vh, 160px));
+  left: var(--guide-left, clamp(14px, 2.8vw, 48px));
+  width: max-content;
+  max-width: min(244px, calc(100% - 28px));
+  font: 700 13px/1.28 Nunito, "Segoe UI", sans-serif;
+  color: #fbf8d9;
+}
+#guide .sv-button {
+  position: relative; display: flex; align-items: center; gap: 5px;
+  width: 100%; min-height: 46px; padding: 4px 10px 4px 3px;
+  border: 1.5px solid #cfdfa4; border-radius: 23px 16px 16px 23px;
+  color: inherit; background: #234d49f5; text-align: left;
+  box-shadow: 0 3px 0 #1b474653; cursor: pointer;
+}
+#guide .sv-copy { display: grid; gap: 1px; }
+#guide .sv-copy b { color: #ffe898; font: 900 11px/1 Nunito, "Segoe UI", sans-serif; }
+#guide .sv-hint { font: 800 13px/1.18 Nunito, "Segoe UI", sans-serif; }
+#guide .sv-chevron { color: #c7dcb4; font-size: 15px; margin-left: auto; }
+#guide [aria-expanded=true] .sv-chevron { transform: rotate(180deg); }
+#guide.sv-ready .sv-button { border-color: #ffe68c; background: #375346; }
+#guide .sv-orbit { position: relative; flex: 0 0 34px; width: 34px; height: 34px; }
+#guide .sv-fly { position: absolute; inset: 1px; transform: rotate(-16deg); animation: sv-hover 2.5s ease-in-out infinite alternate; }
+#guide .sv-body { position: absolute; left: 10px; top: 15px; width: 17px; height: 9px; border-radius: 65% 44% 55% 65%; background: linear-gradient(90deg,#ffffba 0 30%,#e6bd57 50% 70%,#806441 76%); box-shadow: -3px 1px 6px #ffd95d99; }
+#guide .sv-body::after { content: ""; position: absolute; right: -2px; top: -2px; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 70% 32%, #fff8bd 0 15%, transparent 20%),#5b5740; }
+#guide .sv-wing { position: absolute; top: 5px; left: 6px; width: 14px; height: 9px; border-radius: 80% 85% 15% 85%; transform: rotate(25deg); background: #d6f3d5; border: 1px solid #effbe5; }
+#guide .sv-wing-back { top: 3px; left: 16px; width: 10px; height: 13px; transform: rotate(38deg); background: #9ad6bd; }
+#guide .sv-quest { margin-top: 5px; padding: 10px 12px; border: 1.5px solid #cfdfa4; border-radius: 13px; background: #20453ff7; box-shadow: 0 6px 15px #233e4252; }
+#guide .sv-track { display: flex; gap: 4px; margin-bottom: 7px; }
+#guide .sv-track i { width: 18px; height: 4px; background: #527667; border-radius: 4px; }
+#guide .sv-track .sv-lit { background: #f5d879; }
+#guide .sv-title { display:block; font-size: 14px; color: #fff2b0; }
+#guide .sv-detail { margin: 4px 0 0; color: #e8edce; font-size: 12px; line-height: 1.35; }
+#guide .sv-claim { margin-top: 9px; min-height: 36px; width: 100%; padding: 5px 9px; border-radius: 9px; border: 1px solid #fee99b; background: #f6da84; color: #284a39; font: 900 12px/1.2 Nunito, "Segoe UI", sans-serif; cursor:pointer; }
+#guide :focus-visible { outline: 3px solid #f0c75f; outline-offset: 2px; }
+#guide .sv-sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+@keyframes sv-hover { to { transform: translateY(-2px) rotate(-7deg); } }
+@media (max-width: 600px) {
+  #guide { top: var(--guide-top, max(96px, calc(env(safe-area-inset-top) + 82px))); left: var(--guide-left, 12px); max-width: min(199px, 70vw); }
+  #guide .sv-button { min-height: 41px; padding-right: 8px; gap: 3px; }
+  #guide .sv-orbit { flex-basis: 30px; width: 30px; }
+  #guide .sv-hint { font-size: 12px; }
+}
+@media (max-height: 520px) and (min-width: 601px) { #guide { top: var(--guide-top, 98px); max-width: 200px; } }
+@media (prefers-reduced-motion: reduce) { #guide .sv-fly { animation: none; } }

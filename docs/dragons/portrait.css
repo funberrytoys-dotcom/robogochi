@@ -1,0 +1,28 @@
+/* Portrait artboard; input positions and ambient flight both use this same frame. */
+html,body{height:100%;overflow:hidden}body{display:grid;place-items:center;background:#143c3f}body::before{content:'';position:fixed;inset:-24px;background:linear-gradient(#14323685,#16352eab),url("assets/grove-v2/forest.webp") center/cover;filter:blur(15px);pointer-events:none}
+#game{width:min(100vw,56.25svh);height:100svh;min-height:0;container-type:inline-size;box-shadow:0 0 55px #09282e70}
+@media(orientation:portrait) and (max-width:600px){#game{width:100vw}}
+#habitat{position:absolute;inset:0 0 70px;overflow:hidden;mask-image:linear-gradient(#000 0 96%,transparent 100%)}
+#world{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;transform-origin:0 0;transform:translate(var(--camera-x,0%),var(--camera-y,0%)) scale(var(--camera-z,1));transition:transform .85s cubic-bezier(.2,.78,.25,1);filter:none}
+#world::before{display:none}.tree-art,.bough-layer,.nest-rim{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.bough-layer{animation:bloom-in 1s ease-out both}.nest-rim{z-index:3}.perch-stop{position:absolute;z-index:2;transform:translate(-50%,-100%);background:#22594cbf;color:#e8fbbb;border:1.5px solid #dfffce;border-radius:50%;width:30px;height:30px;padding:5px;display:grid;place-items:center}
+@keyframes bloom-in{from{opacity:0;filter:brightness(1.45)}to{opacity:1;filter:none}}
+#hero.baby{width:23%}#hero.teen{width:27%}#hero.adult{width:30%}#hero.egg,.fx-shell{width:14%}
+.foreground{background-size:150% 55%;opacity:.82}.vignette{background:linear-gradient(0deg,#12383ce6,transparent 24%,transparent 91%,#173c3847)}#grove-air{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+header,#dock,#menu,#guide{z-index:4}header{left:12px;right:12px;top:max(12px,env(safe-area-inset-top))}
+.brand{gap:6px}.brand-symbol{width:33px;height:33px}.brand-id small{font-size:8px}.brand-id h1{font-size:clamp(16px,5cqw,24px)}
+.top-tools{gap:5px}.top-tools .circle{width:33px;height:33px}.top-tools .circle svg{width:17px;height:17px}#wallet{min-height:33px;padding:4px 8px;font-size:15px}
+#game .title-area{display:none}
+#dock,#dock:has(.pet-profile){left:50%;transform:translateX(-50%);bottom:calc(max(6px,env(safe-area-inset-bottom)) + 61px);width:calc(100% - 20px);max-width:none;border-radius:14px;background:#163a38ec;padding:9px 10px;gap:6px}
+#dock:has(.pet-profile){display:grid;grid-template-columns:1fr}.dock-badge{display:none}.dock-copy h2{font-size:clamp(16px,5cqw,23px)}.dock-copy p{font-size:12px}.dock-copy.pet-profile{max-width:100%;width:100%;display:flex;align-items:center;gap:7px}
+.pet-profile h2{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pet-profile p{font-size:10px;max-width:30%;flex-shrink:0;line-height:1.1}.mini-needs{margin:0 0 0 auto;gap:3px;flex-shrink:0}.mini-needs span{white-space:nowrap;font-size:9px}.mini-needs svg{width:11px;height:11px}
+.care-actions{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px}.act{min-width:0;min-height:36px;font-size:10px;padding:3px;gap:2px}.act svg{width:17px;height:17px}
+#menu{left:50%;right:auto;top:auto;transform:translateX(-50%);bottom:max(6px,env(safe-area-inset-bottom));width:calc(100% - 16px);grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+.nav-btn{font-size:10px}.nav-btn i{width:37px;height:37px;border-radius:12px}.nav-btn svg{width:21px;height:21px}
+#panel{max-height:calc(100svh - 20px)}#overlay{padding:8px}#toast{bottom:24%}
+@container(max-width:350px){.brand-symbol{display:none}.sheet{padding:13px}.mini-needs span{font-size:8px}.nav-btn{font-size:9px}}
+@media(max-height:520px) and (orientation:landscape){#game{width:min(100vw,64svh)}.brand-symbol,.brand-id small{display:none}
+header{top:4px;left:5px;right:5px}.top-tools .circle,#wallet{height:24px;min-height:24px}.top-tools .circle{width:24px}.nav-btn i{width:24px;height:24px}.nav-btn svg{width:15px}.nav-btn{font-size:8px}#dock,#dock:has(.pet-profile){bottom:42px;padding:5px}.act{min-height:23px}.act svg{height:12px}}
+@media(prefers-reduced-motion:reduce){#world{transition:none}.bough-layer{animation:none}}
+
+#guide{--guide-top:max(58px,calc(env(safe-area-inset-top) + 51px));--guide-left:12px} .forest{background-image:url("assets/ancient-tree/base.webp");background-position:center 78%} .tree-art{background:#396d46} #habitat{background:#376b49}
