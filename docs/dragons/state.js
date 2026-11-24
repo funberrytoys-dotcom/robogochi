@@ -1,9 +1,10 @@
 (() => {
   window.groveAsset=path=>window.GROVE_FILES?.[path]||path;
-  const showcase=new URLSearchParams(location.search).get('showcase')==='grove';
-  const key = 'toysberry.dragon-tree.'+(showcase?'showcase.':new URLSearchParams(location.search).get('journey')==='nest'?'first-bough.':'')+'v1';
-  const names = ['Листик','Искорка','Капля','Слива','Зорька','Лучик'];
-  const families = ['Цветущий','Огненный','Росистый','Лунный','Коралловый','Солнечный'];
+  const params = new URLSearchParams(location.search);
+  const showcase=params.get('showcase');
+  const key = 'toysberry.dragon-tree.'+(showcase==='rigs'?'atlas.':showcase==='grove'?'showcase.':params.get('journey')==='nest'?'first-bough.':'')+'v1';
+  const names = ['Листик','Искорка','Капля','Слива','Зорька','Лучик', ...DragonRig.families.map(row=>row.name)];
+  const families = ['Цветущий','Огненный','Росистый','Лунный','Коралловый','Солнечный', ...DragonRig.families.map(row=>row.family)];
   const ages = ['Малыш','Подросток','Большой дракон'];
   const forms = ['baby','teen','adult'];
   const codes = Object.fromEntries(['LEAF','EMBER','DEW','LILAC','PEACH','SUN'].map((color,i)=>['TB-'+color+'-01',{species:i}]));
@@ -18,14 +19,15 @@
   const now = () => Date.now();
   function makeEgg(code='') {
     const toy = codes[code];
-    return {code, species:toy?.species ?? Math.floor(Math.random()*6), stage:toy?.adult || Math.random()<0.035 ? 2 : 0, warmth:0};
+    return {code, species:toy?.species ?? Math.floor(Math.random()*families.length), stage:toy?.adult || Math.random()<0.035 ? 2 : 0, warmth:0};
   }
   function fresh() {
     const s={v:1, coins:30, dragons:[], eggs:[makeEgg()], focus:'egg', redeemed:[], owned:[], equipped:[], last:now()};
-    if(showcase){
+    if(showcase==='grove'||showcase==='rigs'){
       s.eggs=[];s.owned=['lantern','blossoms'];s.equipped=[...s.owned];s.coins=38;
-      s.dragons=[[0,2],[1,0],[2,1],[3,0]].map(([species,stage],i)=>({
-        id:'grove-'+i,species,stage,name:names[species],born:now()-(3-i)*86400000,xp:[48,18,31,6][i],
+      const lineup=showcase==='rigs'?DragonRig.families.map((_,i)=>[i+6,i%3]):[[0,2],[1,0],[2,1],[3,0]];
+      s.dragons=lineup.map(([species,stage],i)=>({
+        id:'grove-'+i,species,stage,name:names[species],born:now()-Math.max(0,3-i)*86400000,xp:[48,18,31,6][i]??20,
         tricks:i===0?{hop:'Прыгни!'}:{},needs:{food:70,energy:81,clean:73,fun:65},sleeping:false,source:''
       }));
       s.focus=s.dragons[0].id;
@@ -55,6 +57,16 @@
     s.last=t;
   }
   const current=()=>s.dragons.find(d=>d.id===s.focus);
+  const eggPrice = 38;
+  function buyEgg() {
+    if (s.coins < eggPrice) return false;
+    const egg = makeEgg();
+    s.coins -= eggPrice;
+    s.eggs.push(egg);
+    s.focus = 'egg';
+    save();
+    return true;
+  }
   function redeem(code) {
     if(!Object.hasOwn(codes,code))return 'Такого кода нет в коллекции прототипа.';
     if(s.redeemed.includes(code))return 'Это яйцо уже получено на вашем древе.';
@@ -72,6 +84,7 @@
   }
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   function sprite(species,stage,pose='idle') {
+    if(species>=6)return DragonStage.portrait(species,stage,pose==='happy'?'cuddle':pose);
     const form=pose==='happy'?'happy':forms[stage];
     const prefix=pose==='sleep'?'sleep-':reducedMotion.matches?'still-':'';
     return groveAsset('assets/characters-v2/'+prefix+form+'-'+species+'.webp');
@@ -83,5 +96,5 @@
     return Math.min(1,Math.max(d.xp/[18,45][d.stage],ageHours/[24,72][d.stage]));
   }
   tick(true);save();
-  window.Grove={s,names,families,ages,codes,decor,save,tick,current,redeem,warm,sprite,growth};
+  window.Grove={s,names,families,ages,codes,decor,eggPrice,buyEgg,save,tick,current,redeem,warm,sprite,growth};
 })();

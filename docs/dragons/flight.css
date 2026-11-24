@@ -4,7 +4,7 @@
   z-index: 3;
 }
 #world .flight-over > img:not(.flight-cel),
-#world .flight-over > .hero-halo { opacity: 0; }
+#world .flight-over > :is(.hero-halo,.dragon-stage-rig) { opacity: 0; }
 #world .flight-moving > .flight-cel {
   position: absolute; left: 50%; bottom: -9%;
   display: block; width: 112%; max-width: none; max-height: none; height: auto;

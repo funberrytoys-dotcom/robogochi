@@ -1,0 +1,171 @@
+/* Portrait HUD skin. Load after the project's HUD styles. */
+#game.gh-ready {
+  --gh-paper:#f7edcc; --gh-sub:#c7c8b7; --gh-line:#dfc78a7a; --gh-night:#242b3c;
+  --gh-gold:#f1ca7e; --gh-edge:clamp(8px,2.7cqw,14px);
+  --gh-safe:max(6px,env(safe-area-inset-bottom)); --gh-nav:48px;
+}
+.gh-ready .gh-illustration,.gh-ready .gh-link svg,.gh-ready .gh-primary svg,.gh-ready .gh-care summary svg,.gh-ready .gh-feed svg {
+  display:inline-block; flex:none; width:26px; height:26px; vertical-align:middle;
+  filter:drop-shadow(0 1px 1px #1c15284a);
+}
+#game.gh-ready > header {
+  position:absolute; z-index:5; inset:max(8px,env(safe-area-inset-top)) var(--gh-edge) auto;
+  transform:none; min-height:46px; padding:0; gap:8px; display:flex; align-items:center; justify-content:space-between;
+  pointer-events:none;
+}
+.gh-ready > header .brand { min-width:0; display:flex; gap:5px; align-items:center; }
+.gh-ready > header .brand-symbol { flex:none; width:29px; height:37px; display:grid; place-items:center; border:0; border-radius:0; background:none; box-shadow:none; transform:rotate(-9deg); }
+.gh-ready > header .brand-symbol svg { width:29px; height:34px; filter:drop-shadow(0 1px 2px #162a24); }
+.gh-ready > header .brand-id { gap:2px; min-width:0; text-shadow:0 1px 2px #102323,0 1px 8px #172b2a; }
+.gh-ready > header .brand-id small { font:800 8px/1 Nunito,sans-serif; letter-spacing:.13em; color:#e7d6aa; }
+.gh-ready > header .brand-id h1 { margin:0; font:600 clamp(16px,4.8cqw,22px)/1 Georgia,"Times New Roman",serif; color:#fff1c8; letter-spacing:-.045em; }
+.gh-ready > header .top-tools { display:flex; gap:6px; align-items:center; }
+#game.gh-ready #wallet,#game.gh-ready #overview {
+  position:relative; margin:0; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(155deg,#444648f5,#222e3bed); color:#ffe5a1; border:1px solid #e4c9a679;
+  border-radius:17px 15px 17px 13px; box-shadow:inset 0 1px 0 #ffefcc18,0 2px 6px #172b3442;
+  height:36px; min-height:36px;
+}
+#game.gh-ready #wallet { padding:0 11px 0 8px; gap:3px; font-size:15px; line-height:1; font-weight:900; }
+#game.gh-ready #wallet i { display:grid; place-items:center; }
+#game.gh-ready #wallet svg { width:22px; height:22px; }
+#game.gh-ready #overview { width:39px; padding:3px 6px; }
+#game.gh-ready #overview svg { width:26px; height:26px; max-width:100%; max-height:100%; }
+#game.gh-ready #wallet::after,#game.gh-ready #overview::after { content:""; position:absolute; inset:-4px 0; }
+#game.gh-ready #guide { z-index:5; top:max(61px,calc(env(safe-area-inset-top) + 55px)); left:var(--gh-edge); width:max-content; max-width:min(280px,85%); }
+#game.gh-ready #guide .sv-button {
+  width:auto; min-height:34px; display:flex; align-items:center; padding:2px 10px 2px 3px; gap:3px;
+  background:linear-gradient(100deg,#27373ddc,#2e3c40e8); border:1px solid #d8d9aa67;
+  border-radius:17px 11px 14px 13px; box-shadow:0 1px 5px #15252f36;
+}
+#game.gh-ready #guide .sv-button::before { content:""; position:absolute; inset:-4px 0; }
+#game.gh-ready #guide .sv-orbit { transform:scale(.79); transform-origin:50% 50%; flex:0 0 26px; width:26px; height:26px; }
+#game.gh-ready #guide .sv-copy { display:block; }
+#game.gh-ready #guide .sv-copy b { font:800 12px/1 Nunito,sans-serif; color:#e4eac4; }
+#game.gh-ready #guide .sv-hint { display:none; }
+#game.gh-ready #guide .sv-chevron { color:#d3c6a2; font-size:12px; padding-left:3px; }
+#game.gh-ready #guide.sv-ready .sv-button { background:#504838; border-color:#ecc979; }
+#game.gh-ready #guide.sv-ready .sv-copy b::after { content:" · Награда"; color:#ffda84; }
+#game.gh-ready #guide .sv-quest {
+  background:linear-gradient(140deg,#38424b,#26353d); border:1px solid #cfc6a375; border-radius:13px;
+  box-shadow:0 6px 18px #17202b55; padding:12px 14px;
+}
+#game.gh-ready #guide .sv-title { color:#ffe7ac; font:600 18px/1.1 Georgia,serif; }
+#game.gh-ready #guide .sv-detail { font-size:13px; font-weight:650; line-height:1.35; color:#e6e6ce; }
+#game.gh-ready #guide .sv-claim { min-height:42px; }
+#game.gh-ready #menu,#game.gh-ready #dock {
+  position:absolute; right:var(--gh-edge); left:var(--gh-edge); top:auto; width:auto; max-width:none; margin:0;
+  min-width:0; transform:none; text-shadow:none; font-family:Nunito,"Segoe UI",sans-serif; color:var(--gh-paper);
+}
+#game.gh-ready #menu {
+  bottom:var(--gh-safe); z-index:6; height:var(--gh-nav); padding:0 6px 1px;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-auto-flow:row; grid-auto-columns:auto; gap:0;
+  align-items:stretch; justify-content:normal; justify-items:stretch;
+  border:1px solid #c4bb906b; border-top:1px solid #a7aa8b43; border-radius:0 0 22px 16px;
+  background:linear-gradient(145deg,#2c3740fc,#202c35fc); box-shadow:0 5px 13px #15212955,inset 0 -2px #8aa29925;
+}
+#game.gh-ready #dock {
+  bottom:calc(var(--gh-safe) + var(--gh-nav) - 1px); z-index:5; min-height:72px;
+  padding:8px 10px; display:flex; align-items:center; justify-content:flex-start; gap:7px;
+  background:radial-gradient(ellipse at 11% -10%,#576b5842,transparent 56%),linear-gradient(155deg,#384647f7,#29343ef8 80%);
+  border:1px solid var(--gh-line); border-bottom:0; border-radius:18px 23px 0 0;
+  box-shadow:0 -1px 7px #182a2821,inset 0 2px 0 #e9e3b214;
+}
+#game.gh-ready #dock:has(.gh-details[open]) { z-index:7; }
+#game.gh-ready #dock :is(h2,small,span) { min-width:0; }
+#game.gh-ready #menu button,#game.gh-ready #dock button,#game.gh-ready :is(#menu,#dock) summary {
+  box-sizing:border-box; font-family:inherit; cursor:pointer; appearance:none; touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent; text-transform:none; text-shadow:none;
+}
+#game.gh-ready :is(#menu,#dock) .gh-link,#game.gh-ready #menu .gh-details > summary {
+  display:flex; align-items:center; justify-content:center; gap:6px; width:100%; height:100%; min-height:43px;
+  color:#f1e4c5; background:none; border:0; border-radius:9px; box-shadow:none; padding:3px 4px;
+  font-size:13px; font-weight:850; line-height:1.08;
+}
+#game.gh-ready #menu > .gh-link,#game.gh-ready #menu > .gh-details { position:relative; }
+#game.gh-ready #menu > .gh-link::after { content:""; position:absolute; right:0; top:24%; height:51%; width:1px; background:linear-gradient(transparent,#c2b99068,transparent); }
+#game.gh-ready #menu > .gh-link svg,#game.gh-ready #menu > .gh-details > summary svg { width:28px; height:28px; }
+#game.gh-ready :is(#menu,#dock) .gh-link:hover,#game.gh-ready :is(#menu,#dock) summary:hover { background:#d2ddbd15; }
+#game.gh-ready :is(#menu,#dock) :is(button,summary):focus-visible { outline:2px solid #ffe094; outline-offset:-3px; }
+#game.gh-ready :is(#menu,#dock) summary { list-style:none; }
+#game.gh-ready :is(#menu,#dock) summary::-webkit-details-marker { display:none; }
+#game.gh-ready :is(#menu,#dock) .gh-details { position:relative; min-width:0; }
+#game.gh-ready :is(#menu,#dock) .gh-pop {
+  position:absolute; right:0; bottom:calc(100% + 7px); z-index:1; width:max-content;
+  min-width:min(165px,75cqw); max-width:calc(100cqw - 24px); max-height:45svh; overflow-y:auto; overscroll-behavior:contain;
+  padding:5px; border:1px solid #d6c49b98; border-radius:16px 16px 8px 16px;
+  background:linear-gradient(140deg,#35464bfc,#29323ffc); box-shadow:0 5px 20px #15242c82,inset 0 1px 0 #ffebce15;
+}
+#game.gh-ready :is(#menu,#dock) .gh-pop .gh-link,#game.gh-ready #menu .gh-pop #audio-toggle {
+  justify-content:flex-start; gap:10px; padding:8px 11px; min-height:43px; height:auto; width:100%;
+  border:0; border-radius:9px; background:none; color:var(--gh-paper); font-size:13px; font-weight:800; box-shadow:none;
+}
+#game.gh-ready #menu .gh-pop #audio-toggle { display:flex; align-items:center; position:relative; }
+#game.gh-ready #menu .gh-pop #audio-toggle::after { content:"Звук включён"; }
+#game.gh-ready #menu .gh-pop #audio-toggle[aria-pressed="false"]::after { content:"Звук выключен"; }
+#game.gh-ready #menu .gh-pop #audio-toggle svg { width:24px; height:24px; }
+#game.gh-ready #menu .gh-pop #audio-toggle:hover,#game.gh-ready :is(#menu,#dock) .gh-pop .gh-link:hover { background:#e1e4bf16; }
+#game.gh-ready #dock .gh-caption { flex:1 1 auto; min-width:0; display:grid; place-content:center start; gap:2px; }
+#game.gh-ready #dock .gh-caption h2 { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font:600 clamp(17px,4.9cqw,23px)/1.08 Georgia,"Times New Roman",serif; letter-spacing:-.025em; color:#ffedc5; margin:0; text-align:left; }
+#game.gh-ready #dock .gh-caption small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font:750 clamp(10px,2.85cqw,12px)/1.18 Nunito,sans-serif; color:#ccd3c0; text-align:left; }
+#game.gh-ready #dock .gh-caption small b { color:#eed09c; font-size:1.22em; }
+#game.gh-ready #dock .gh-egg-mark,#game.gh-ready #dock .gh-avatar {
+  flex:none; display:grid; place-items:center; overflow:hidden;
+  width:39px; height:42px; border:1px solid #d6c79e65; border-radius:52% 47% 45% 46%;
+  background:radial-gradient(ellipse at 40% 36%,#638b77,#365a57 68%,#2d4e50); box-shadow:inset 0 -2px 0 #27393c44;
+}
+#game.gh-ready #dock .gh-egg-mark svg { width:29px; height:32px; }
+#game.gh-ready #dock .gh-avatar img { display:block; width:96%; height:90%; object-fit:contain; object-position:50% 80%; }
+#game.gh-ready #dock .gh-warmth { display:flex; gap:3px; margin:2px 0 0; }
+#game.gh-ready #dock .gh-warmth i { width:14px; height:3px; border-radius:3px; background:#83978977; }
+#game.gh-ready #dock .gh-warmth i.is-warm { background:#f4cd82; }
+#game.gh-ready #dock .gh-primary {
+  flex:0 0 auto; min-height:44px; display:flex; align-items:center; justify-content:center; gap:4px; padding:4px 11px 4px 8px;
+  border:1px solid #ffe7a8; border-radius:14px 17px 13px 12px;
+  background:linear-gradient(155deg,#ffdf9b,#edc47e 72%,#e5b479); color:#40342c;
+  box-shadow:inset 0 -2px 0 #9c744a42,0 2px 5px #17252c45; font-size:13px; font-weight:950; line-height:1;
+}
+#game.gh-ready #dock .gh-primary:hover { filter:brightness(1.05); }
+#game.gh-ready #dock .gh-profile {
+  flex:1 1 0; min-width:0; padding:0; display:flex; align-items:center; gap:7px; background:none; border:0; text-align:left;
+}
+#game.gh-ready #dock .gh-feed,#game.gh-ready #dock .gh-care summary {
+  min-width:44px; min-height:44px; border:0; box-shadow:none; border-radius:9px; background:none; color:#e5e7cb; padding:2px 1px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  font:800 10px/1.1 Nunito,sans-serif;
+}
+#game.gh-ready #dock .gh-feed svg,#game.gh-ready #dock .gh-care summary svg { width:23px; height:23px; }
+#game.gh-ready #gh-cue {
+  position:absolute; z-index:4; pointer-events:none; bottom:calc(var(--gh-safe) + var(--gh-nav) + 82px);
+  left:50%; transform:translate(-50%,6px); opacity:0; display:flex; align-items:center; gap:6px; color:#fff1cb;
+  border:1px solid #c9bb9288; background:#313545eb; border-radius:18px 18px 18px 5px;
+  padding:3px 11px 3px 5px; min-height:31px; font:800 13px/1 Nunito,sans-serif; transition:opacity .16s,transform .2s;
+}
+#game.gh-ready #gh-cue.visible { opacity:1; transform:translate(-50%,0); }
+#game.gh-ready #gh-cue svg { width:27px; height:27px; }
+#game.gh-ready #toast { bottom:calc(var(--gh-safe) + var(--gh-nav) + 84px); z-index:8; }
+@container (max-width:349px) {
+  #game.gh-ready #dock { padding:7px 8px; gap:4px; min-height:66px; }
+  #game.gh-ready #dock[data-mode="pet"] .gh-avatar { width:28px; height:34px; }
+  #game.gh-ready #dock .gh-egg-mark { width:31px; height:36px; }
+  #game.gh-ready #dock .gh-primary { padding:4px 7px; gap:2px; font-size:12px; }
+  #game.gh-ready #dock .gh-primary svg { width:22px; height:22px; }
+  #game.gh-ready #dock .gh-profile { gap:4px; }
+  #game.gh-ready #menu .gh-link,#game.gh-ready #menu .gh-details > summary { font-size:12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  #game.gh-ready #gh-cue { transition:none; }
+}
+
+#game.gh-ready #dock .gh-pop:has(.gh-gestures) { width:min(250px,80cqw); }
+#game.gh-ready .gh-gestures { border-top:1px solid #d6cfab40; padding:7px 9px 3px; margin:3px 2px 1px; }
+#game.gh-ready .gh-gestures strong { display:block; font:800 11px/1.2 Nunito,sans-serif; color:#e9d8ad; }
+#game.gh-ready .gh-gestures p { display:flex; align-items:center; gap:6px; margin:5px 0; color:#d8decb; font:650 12px/1.25 Nunito,sans-serif; }
+#game.gh-ready .gh-gestures p svg { width:22px; height:22px; flex:none; }
+#game.gh-ready #menu .gh-pop .gh-atlas span { display:grid; gap:2px; text-align:left; }
+#game.gh-ready #menu .gh-pop .gh-atlas small { color:#c7cdb6; font:650 10px/1.1 Nunito,sans-serif; }
+#game.gh-ready #dock .gh-profile { min-height:44px; }
+@container (max-width:349px) {
+  #game.gh-ready #dock[data-mode="pet"] .gh-avatar { display:none; }
+  #game.gh-ready #dock .gh-profile { padding-left:3px; }
+}

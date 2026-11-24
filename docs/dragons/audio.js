@@ -4,11 +4,12 @@
 
   const file = name => groveAsset("assets/audio-soft/" + name + ".mp3");
   const preferenceKey = "toysberry.dragon-tree.sound.v1";
+  const dragonVoices=["dragon-purr","dragon-cuddle","dragon-growl","dragon-angry","dragon-bite","dragon-lift","dragon-release"];
   const names = new Set([
     "egg", "hatch", "pet", "feed", "sleep", "win", "school", "click",
-    "evolve", "coin", "note0", "note1", "note2", "note3", "fail"
+    "evolve", "coin", "note0", "note1", "note2", "note3", "fail", "cartoon-vocal-yawn", ...dragonVoices
   ]);
-  const highPriority = new Set(["hatch", "evolve", "win"]);
+  const highPriority = new Set(["hatch", "evolve", "win", "cartoon-vocal-yawn", ...dragonVoices]);
   const lastStart = new Map();
   const playing = new Set();
   const limits = { click: 180, pet: 420, egg: 220, feed: 350, school: 300 };

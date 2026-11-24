@@ -4,9 +4,13 @@
   const missions = {
     1: { action: 'care', reward: 8, title: 'Забота о драконе', hint: 'Угости или погладь дракона.' },
     2: { action: 'lesson', reward: 12, title: 'Первый трюк', hint: 'Разучи трюк в школе или повтори знакомый.' },
-    3: { action: 'game', reward: 16, title: 'Лесная игра', hint: 'Закончи одну мини-игру.' }
+    3: { action: 'game', reward: 16, title: 'Лесная игра', hint: 'Закончи одну мини-игру.' },
+    4: { action: 'care', reward: 20, title: 'Тепло кроны', hint: 'Угости или погладь дракона.' },
+    5: { action: 'lesson', reward: 24, title: 'Тропа к сердцу', hint: 'Покажи трюк в школе драконов.' },
+    6: { action: 'game', reward: 28, title: 'Тайна корней', hint: 'Закончи лесную игру.' }
   };
-  const ordinals = ['', 'первую', 'вторую', 'третью', 'четвёртую'];
+  const total = Object.keys(missions).length+1;
+  const ordinals = ['', 'первую', 'вторую', 'третью', 'четвёртую', 'пятую', 'шестую', 'седьмую'];
   let grove, host, parts, expanded = false, receipt = '';
 
   function count() {
@@ -16,14 +20,14 @@
   function initialize(game) {
     grove = game;
     const old = grove.s.branches;
-    const showcase = new URLSearchParams(location.search).get('showcase') === 'grove';
+    const showcase = ['grove','rigs'].includes(new URLSearchParams(location.search).get('showcase'));
     const residents = grove.s.dragons.length;
     const oldCount = Number.isInteger(old?.open) ? old.open : Math.max(1, residents);
-    const open = showcase ? 4 : Math.max(1, Math.min(4, oldCount));
+    const open = showcase ? total : Math.max(1, Math.min(total, oldCount));
     const progress = {
       open,
       hatched: Boolean(old?.hatched || residents),
-      done: old?.open === open && open < 4 && old?.done === true
+      done: old?.open === open && open < total && old?.done === true
     };
     grove.s.branches = progress;
     if (!old || old.open !== open || old.hatched !== progress.hatched || old.done !== progress.done) grove.save();
@@ -33,7 +37,7 @@
         '<span class="sv-orbit" aria-hidden="true"><i class="sv-fly"><i class="sv-wing"></i><i class="sv-wing sv-wing-back"></i><i class="sv-body"></i></i></span>'+
         '<span class="sv-copy"><b>Светик</b><span class="sv-hint"></span></span><span class="sv-chevron" aria-hidden="true">⌄</span></button>'+
         '<section id="sv-quest" class="sv-quest" aria-label="Задание Светика" hidden>'+
-        '<div class="sv-track" aria-hidden="true"><i></i><i></i><i></i><i></i></div>'+
+        '<div class="sv-track" aria-hidden="true">'+'<i></i>'.repeat(total)+'</div>'+
         '<b class="sv-title"></b><p class="sv-detail"></p><button type="button" class="sv-claim" hidden></button></section>'+
         '<span class="sv-sr" role="status"></span>';
       host.querySelector('.sv-button').addEventListener('click', () => setExpanded(!expanded));

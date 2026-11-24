@@ -1,6 +1,7 @@
 /* Local, lightweight wildlife. All coordinates are relative to the portrait stage. */
 (() => {
   const canvas=document.querySelector('#grove-air'), ctx=canvas.getContext('2d');
+  const habitat=document.querySelector('#habitat');
   if(!ctx)return;
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
   const art=Array.from({length:4},(_,index)=>{const image=new Image();image.src=groveAsset('assets/wildlife/'+index+'.webp');return image;});
@@ -16,10 +17,11 @@
   }
   function paint(){
     ctx.clearRect(0,0,w,h);const t=clock, obscured=GroveDepth.wildlifeMask(canvas);
+    const distance=habitat.dataset.view==='valley'?.52:habitat.dataset.view==='tree'?.74:1;
     for(let i=0;i<28;i++){
       const f=i*2.39996, near=i%5===0;
       const x=w*(.08+.84*((i*.618)%1)+.061*Math.sin(t*.33+f)+.013*Math.sin(t*1.23-f));
-      const y=h*(.20+.63*((i*.423+0.31)%1)+.03*Math.sin(t*.49-f));const size=near?14:8.5;
+      const y=h*(.20+.63*((i*.423+0.31)%1)+.03*Math.sin(t*.49-f));const size=(near?14:8.5)*distance;
       ctx.globalAlpha=.30+.66*(.5+.5*Math.sin(t*(.9+i%3*.22)+f));ctx.drawImage(glow,x-size,y-size,size*2,size*2);
     }
     for(let i=0;i<14;i++){
@@ -35,7 +37,7 @@
       const visit=call?Math.max(0,1-(clock-call.time)/3.2):0;
       if(visit&&i<3){const blend=Math.sin(visit*Math.PI)*.88;x+=(call.x+Math.sin(phase*3)*36-x)*blend;y+=(call.y-17+Math.cos(phase*3)*20-y)*blend;}
       if(obscured?.(x,y) || obscured?.(x-8,y) || obscured?.(x+8,y))return;
-      const size=base*Math.min(1.4,Math.max(.82,w/400)), width=size*(.23+.77*Math.abs(Math.sin(t*(5.6+i*.42)+i*.7)));
+      const size=base*Math.min(1.4,Math.max(.82,w/400))*distance, width=size*(.23+.77*Math.abs(Math.sin(t*(5.6+i*.42)+i*.7)));
       ctx.save();ctx.translate(x,y);ctx.rotate(.22*Math.sin(phase*1.8)+.65*Math.cos(phase));ctx.globalAlpha=i<4?.97:.78;ctx.drawImage(img,-width/2,-size*.39,width,size*.78);ctx.restore();
     });
     for(let i=flares.length-1;i>=0;i--){

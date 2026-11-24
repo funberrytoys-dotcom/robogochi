@@ -1,44 +1,72 @@
 (() => {
   const world=document.querySelector('#world'),field=document.querySelector('#habitat');
-  const branches=document.querySelector('#boughs'),stops=document.querySelector('#stops'),camera=document.querySelector('#overview');
-  const names=['Гнездо','Цветущая ветвь','Ветвь светляков','Солнечная крона'];
-  const mounts=[[47.5,74.5],[25.2,52.7],[73,36.2],[30.8,18.5]];
-  const nest=[47.5,74.5];
-  let overview=false,lastScene='',lastCount=0;
-  function slot(d,count){
-    const stored=Number.isInteger(d.bough)?d.bough:Grove.s.dragons.findIndex(row=>row.id===d.id);
-    return Math.min(count-1,Math.max(0,stored));
-  }
+  const stops=document.querySelector('#stops');
+  const names=['Гнездо','Цветущая ветвь','Ветвь светляков','Золотой уступ','Солнечная крона','Тропа к сердцу','Корни Древа'];
+  const mounts=GroveCamera.mounts,nest=mounts[0];
+  const islands=[
+    {name:'Западный остров',x:-23,y:55,width:29,asset:'world-foundation'},
+    {name:'Восточный остров',x:124,y:68,width:29,asset:'roost-east'},
+    {name:'Верхний остров',x:117,y:29,width:24,asset:'roost-upper'},
+  ];
+  let lastScene='', places=new Map();
+  const landscape=document.querySelector('#island-homes');
+  const islandButtons=islands.map(({name,x,y,width,asset})=>{
+    const island=document.createElement('button'),art=new Image();
+    island.className='island-home';island.type='button';island.title=name;island.disabled=true;
+    island.style.left=x+'%';island.style.top=y+'%';island.style.width=width+'%';
+    art.src=groveAsset('assets/depth/'+asset+'.webp');art.alt='';
+    island.append(art);landscape.append(island);return island;
+  });
   function seats(count){
-    const groups=Array.from({length:count},()=>[]);
-    Grove.s.dragons.forEach(d=>groups[slot(d,count)].push(d));
-    const map=new Map();
-    groups.forEach((group,index)=>{
-      group.forEach((d,i)=>{
-        const [cx,cy]=mounts[index], spread=group.length>1?Math.min(21/(group.length-1),12):0;
-        map.set(d.id,{index,x:cx+(i-(group.length-1)/2)*spread,y:cy-(i%2)*1.3});
-      });
+    const map=new Map(),occupied=new Set(),overflow=[];
+    const occupy=(d,index)=>{
+      const [x,y]=mounts[index];
+      map.set(d.id,{index,x,y});occupied.add(index);
+    };
+    for(const d of Grove.s.dragons){
+      if(Number.isInteger(d.bough)&&d.bough>=0&&d.bough<count&&!occupied.has(d.bough))occupy(d,d.bough);
+    }
+    for(const d of Grove.s.dragons){
+      if(map.has(d.id))continue;
+      const free=mounts.findIndex((_,i)=>i<count&&!occupied.has(i));
+      if(free===-1)overflow.push(d);else occupy(d,free);
+    }
+    overflow.forEach((d,i)=>{
+      const index=i%islands.length,{x,y}=islands[index];
+      const row=Math.floor(i/islands.length), residents=Math.ceil((overflow.length-index)/islands.length);
+      const spacing=residents>1?Math.min(5,14/(residents-1)):0;
+      map.set(d.id,{index:-1,island:index,x:x+(row-(residents-1)/2)*spacing,y:y-(row%2)*.56});
     });
     return map;
   }
   function refresh(){
-    const count=Branches.count(),s=Grove.s,d=Grove.current(),egg=s.focus==='egg',places=seats(count);
+    const count=Branches.count(),s=Grove.s,d=Grove.current(),egg=s.focus==='egg';
+    places=seats(count);
     const active=egg?{x:nest[0],y:nest[1],index:0}:places.get(d?.id)||{x:nest[0],y:nest[1],index:0};
     world.style.setProperty('--home-x',active.x+'%');world.style.setProperty('--home-y',active.y+'%');
     world.style.setProperty('--nest-x',nest[0]+'%');world.style.setProperty('--nest-y',nest[1]+'%');
-    const key=[count,s.focus,...s.dragons.map(x=>x.id+'.'+x.stage+'.'+slot(x,count)+'.'+x.name+'.'+x.sleeping)].join('/');
-    if(count!==lastCount){
-      branches.replaceChildren();
-      for(let i=1;i<count;i++){const layer=new Image();layer.src=groveAsset('assets/ancient-tree/branch-'+i+'.webp');layer.className='bough-layer';layer.alt='';branches.append(layer);}
-      lastCount=count;
-    }
+    const key=[count,s.focus,...s.dragons.map(d=>[d.id,d.stage,d.bough,d.name,d.sleeping].join('.'))].join('/');
+    GroveFog.setCount(count);
     if(key!==lastScene){
       lastScene=key;const occupied=new Set([...places.values()].map(p=>p.index));if(egg)occupied.add(0);
-      const rl=document.querySelector('#residents');rl.replaceChildren();stops.replaceChildren();
+      const rl=document.querySelector('#residents'),hero=document.querySelector('#hero');
+      hero.toggleAttribute('data-island-home',active.island!==undefined);
+      islandButtons.forEach((button,index)=>{
+        const resident=s.dragons.find(row=>places.get(row.id)?.island===index);
+        button.disabled=!resident;
+        if(resident)button.dataset.friend=resident.id;else delete button.dataset.friend;
+        button.setAttribute('aria-label',islands[index].name+(resident?' · '+resident.name:''));
+      });
+      rl.replaceChildren();stops.replaceChildren();
       s.dragons.filter(row=>row.id!==s.focus).forEach(row=>{
         const pos=places.get(row.id),b=document.createElement('button'),pic=new Image();b.className='perch';b.dataset.friend=row.id;b.title=row.name;b.setAttribute('aria-label','Позвать дракона · '+row.name);
-        b.style.left=pos.x+'%';b.style.top=pos.y+'%';b.style.width=[17,19,22][row.stage]+'%';
-        if(egg&&pos.index===0)b.style.left=Math.min(86,pos.x+16)+'%';
+        if(pos.island!==undefined){
+          b.dataset.islandHome=String(pos.island);
+          b.title=row.name+' · '+islands[pos.island].name;
+          b.setAttribute('aria-label',b.title);
+        }
+        b.style.left=pos.x+'%';b.style.top=pos.y+'%';b.style.width=[2.6,4,6][row.stage]+'%';
+        if(egg&&pos.index===0)b.style.left=(pos.x+4)+'%';
         pic.src=Grove.sprite(row.species,row.stage,row.sleeping?'sleep':'idle');pic.alt='';b.append(pic);rl.append(b);
       });
       for(let i=0;i<count;i++){
@@ -47,16 +75,9 @@
         b.setAttribute('aria-label','Перелететь · '+names[i]);b.title='Перелететь · '+names[i];b.innerHTML=glyph('leaf');b.onclick=()=>{d.bough=i;Grove.save();window.dispatchEvent(new Event('grove-branches-changed'));};stops.append(b);
       }
     }
-    const near=count===4?overview:!overview;
-    const label=near?'Осмотреть древо':'Приблизиться к дракону';
-    camera.title=label;camera.setAttribute('aria-label',label);camera.setAttribute('aria-pressed',String(overview));
-    const zoom=near?[1.25,1.30,1.13,1.5][count-1]:1;
-    const dx=Math.max(1-zoom,Math.min(0,.50-(active.x/100)*zoom));
-    const dy=Math.max(1-zoom,Math.min(0,.59-(active.y/100)*zoom));
-    world.style.setProperty('--camera-z',zoom);world.style.setProperty('--camera-x',dx*100+'%');world.style.setProperty('--camera-y',dy*100+'%');
-    GroveDepth.setView(count,zoom,dx,dy);
-    field.dataset.boughs=count;field.dataset.view=near?'near':'wide';
+    GroveCamera.focus([active.x,active.y]);
+    field.dataset.boughs=count;
   }
-  camera.onclick=()=>{overview=!overview;refresh();};
-  window.Habitat={refresh};
+  function islandName(id){return islands[places.get(id)?.island]?.name;}
+  window.Habitat={refresh,islandName};
 })();

@@ -10,3 +10,8 @@ https://github.com/sfzinstruments/SalamanderGrandPiano
 https://creativecommons.org/licenses/by/3.0/
 
 Для этой игры сэмплы тихой динамики были транспонированы, обработаны мягкой огибающей и фильтром, а затем сведены в короткие игровые звуковые фразы. Исходная библиотека не распространяется в составе игры.
+
+Cartoon vocal yawn — Mixkit, SFX 2268, Mixkit Free License.
+https://mixkit.co/free-sound-effects/yawn/
+
+Dragon vocal reactions (dragon-purr, dragon-cuddle, dragon-growl, dragon-angry, dragon-bite, dragon-lift, dragon-release) were synthesized for ToysBerry using original local procedural Foley. No external samples.

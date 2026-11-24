@@ -4,16 +4,11 @@
   const $=id=>document.getElementById(id);
   const panel=$('panel'), overlay=$('overlay'), hero=$('hero');
   const escapeHTML=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const menu=[
-    ['school','Школа','book','#746c9c','#504b78'],['games','Игры','games','#5b9291','#366f74'],
-    ['collection','Коллекция','collection','#70966b','#436d57'],['shop','Лавка','shop','#ae8964','#81604c'],
-    ['qr','QR игрушки','qr','#537d85','#3c626b']
-  ];
   const needs=[['food','Сытость','berry'],['energy','Бодрость','moon'],['clean','Чистота','drop'],['fun','Радость','heart']];
   const sounds={tap:'click',sparkle:'school',miss:'fail'};
   const sound=name=>DragonAudio.play(sounds[name]||name);
   const activeEgg=()=>s.focus==='egg'&&s.eggs[0];
-  let cleanup=null, returnFocus=null,toastTimer,reactionTimer,animTimer,expressionTimer,hatchBusy=false;
+  let cleanup=null, returnFocus=null,toastTimer,reactionTimer,animTimer,hatchBusy=false;
   const header=(kicker,title)=>'<div class="sheet-head"><div><div class="eyebrow">'+kicker+'</div><h2>'+title+'</h2></div><button class="circle" data-close aria-label="Закрыть">'+glyph('close')+'</button></div>';
   function modal(title){
     clearTimeout(toastTimer);$('toast').classList.remove('on');
@@ -27,6 +22,12 @@
   }
   function toast(text){$('toast').textContent=text;$('toast').classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('on'),3100);}
   function react(text){const el=$('reaction');el.textContent=text;el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(reactionTimer);reactionTimer=setTimeout(()=>el.classList.remove('show'),1520);}
+  const dragonCues={cuddle:'♥',purr:'Мур-р-р…',growl:'Р-р-р…',angry:'Фыр!',bite:'Щёлк!'};
+  function creatureCue(pose){
+    sound('dragon-'+pose);
+    if(dragonCues[pose])react(dragonCues[pose]);
+    if(['purr','growl','bite'].includes(pose))window.GroveHUD?.cue(pose);
+  }
   function bounce(){hero.classList.remove('touched');void hero.offsetWidth;hero.classList.add('touched');clearTimeout(animTimer);animTimer=setTimeout(()=>hero.classList.remove('touched'),650);}
   function flourish(icon,color){
     if(reduced.matches)return;
@@ -44,29 +45,31 @@
   function audioUI(){const on=DragonAudio.enabled();$('audio-toggle').innerHTML=glyph(on?'sound':'mute');$('audio-toggle').setAttribute('aria-label',on?'Выключить звук':'Включить звук');$('audio-toggle').setAttribute('aria-pressed',String(on));}
   $('audio-toggle').onclick=()=>{DragonAudio.toggle();audioUI();};
   $('wallet').onclick=()=>openMenu('shop');
-  $('menu').innerHTML=menu.map(([key,name,icon,c1,c2])=>'<button class="nav-btn" data-page="'+key+'" style="--tile:'+c1+';--tile2:'+c2+'"><i>'+glyph(icon)+'</i><span>'+name+'</span></button>').join('');
+  GroveHUD.mount();
   $('menu').onclick=e=>{const b=e.target.closest('[data-page]');if(b)openMenu(b.dataset.page);};
 
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
-  $('residents').onclick=e=>{const b=e.target.closest('[data-friend]');if(b&&!hatchBusy){s.focus=b.dataset.friend;save();render();sound('pet');react('♥');}};
+  $('world').onclick=e=>{
+    const b=e.target.closest('[data-friend]');
+    if(!b||hatchBusy)return;
+    s.focus=b.dataset.friend;save();render();
+    if(Habitat.islandName(s.focus))GroveCamera.centerHome();
+    sound('pet');react('♥');
+  };
   function render(){
     const d=current(),egg=activeEgg();
     if(!d&&!egg){s.focus=s.eggs.length?'egg':s.dragons[0]?.id;if(s.focus){save();return render();}return;}
     $('balance').textContent=s.coins;
     $('ornaments').innerHTML=s.equipped.map(id=>'<img class="decor-'+id+'" src="'+groveAsset('assets/decor/'+id+'.webp')+'" alt="">').join('');
-    Habitat.refresh();hero.className=egg?'egg warm-'+egg.warmth:['baby','teen','adult'][d.stage]+(d.sleeping?' sleep':'');
+    Habitat.refresh();hero.classList.remove('egg','warm-0','warm-1','warm-2','baby','teen','adult','sleep');
+    if(egg)hero.classList.add('egg','warm-'+egg.warmth);
+    else {hero.classList.add(['baby','teen','adult'][d.stage]);hero.classList.toggle('sleep',d.sleeping);}
     const src=egg?groveAsset('assets/grove-v2/egg.webp'):sprite(d.species,d.stage,d.sleeping?'sleep':'idle');
     if($('hero-img').getAttribute('src')!==src)$('hero-img').src=src;
+    DragonStage.setDragon(egg?null:d);
     hero.setAttribute('aria-label',egg?'Согреть яйцо':'Погладить дракона · '+d.name);
-    if(egg){
-      const titles=['Кто-то внутри…','Яйцо шевелится','Скорлупа трещит'];
-      const hints=['Согрейте яйцо ладонью.','Коснитесь его ещё раз.','Помогите дракону выбраться.'];
-      $('dock').innerHTML='<div class="dock-badge">'+glyph('egg')+'</div><div class="dock-copy"><h2>'+titles[egg.warmth]+'</h2><p>'+hints[egg.warmth]+'</p><div class="warmth" aria-label="Тепло '+egg.warmth+' из 3">'+[0,1,2].map(i=>'<i class="'+(i<egg.warmth?'on':'')+'"></i>').join('')+'</div></div><button class="gold" data-care="warm">'+glyph('hand')+(egg.warmth===2?'Вылупить':'Согреть')+'</button>';
-    }else{
-      const actions=[['feed','berry','Угостить'],['pet','heart','Гладить'],['wash','drop','Умыть'],['sleep','moon',d.sleeping?'Разбудить':'Уложить']];
-      if(Object.keys(d.tricks).length)actions.push(['command','spark','Команда']);
-      $('dock').innerHTML='<button class="dock-copy pet-profile" data-care="profile" aria-label="Паспорт '+escapeHTML(d.name)+'"><h2>'+escapeHTML(d.name)+' <small>›</small></h2><p>'+ages[d.stage]+(d.stage<2&&growth(d)>=1?' · Пора расти':d.sleeping?' · Спит':' · '+families[d.species])+'</p><div class="mini-needs">'+needs.map(([key,label,icon])=>'<span title="'+label+'">'+glyph(icon)+Math.round(d.needs[key])+'</span>').join('')+'</div></button><div class="care-actions">'+actions.map(([key,icon,label])=>'<button class="act" data-care="'+key+'">'+glyph(icon)+label+'</button>').join('')+'</div>';
-    }
+    if(egg)GroveHUD.egg({warmth:egg.warmth});
+    else GroveHUD.pet({name:d.name,stage:ages[d.stage],sprite:src,sleeping:d.sleeping,canGrow:d.stage<2&&growth(d)>=1,hasCommand:Object.keys(d.tricks).length>0});
   }
   function plural(n,forms){return forms[n%100>10&&n%100<20?2:n%10===1?0:n%10>=2&&n%10<=4?1:2];}
   function warm(){
@@ -91,27 +94,29 @@
     if(d.sleeping&&action!=='sleep'){toast('Дракон дремлет. Чтобы поиграть, разбудите его.');return;}
     if(action==='command'){treeCommand(d);return;}
     const change={pet:['fun',16,'pet','♥'],feed:['food',22,'feed','Ням!'],wash:['clean',24,'pet','Кап-кап!']};
-    if(action==='sleep'){d.sleeping=!d.sleeping;save();render();sound(d.sleeping?'sleep':'pet');react(d.sleeping?'Zzz…':'Доброе утро!');return;}
+    if(action==='sleep'){
+      d.sleeping=!d.sleeping;save();render();
+      sound(d.sleeping?'sleep':d.stage===0?'cartoon-vocal-yawn':'pet');
+      react(d.sleeping?'Zzz…':'Доброе утро!');return;
+    }
     const item=change[action];if(!item)return;
     const [stat,amount,fx,words]=item,before=d.needs[stat];
     d.needs[stat]=Math.min(100,before+amount);if(before<96)d.xp+=2;
-    save();if(action==='feed'||action==='pet')Branches.event('care');render();sound(fx);bounce();react(words);GroveAir.stir(hero);
-    flourish({feed:'berry',wash:'drop',pet:'heart'}[action],{feed:'#f9b4ae',wash:'#9feef3',pet:'#ffbecd'}[action]);
-    if(d.stage===0 && (action==='pet'||action==='feed')){
-      clearTimeout(expressionTimer);$('hero-img').src=sprite(d.species,d.stage,'happy');
-      expressionTimer=setTimeout(()=>{if(current()?.id===d.id)$('hero-img').src=sprite(d.species,d.stage,d.sleeping?'sleep':'idle');},1550);
+    save();if(action==='feed'||action==='pet')Branches.event('care');render();
+    if(action==='pet'){
+      const pose=d.needs.fun>=78?'purr':'cuddle';
+      DragonStage.express(pose,1300);creatureCue(pose);
+    }else{
+      sound(fx);react(words);
+      if(action==='feed'&&d.species>=6)DragonStage.express('purr',820);
+      else bounce();
     }
+    GroveAir.stir(hero);
+    flourish({feed:'berry',wash:'drop',pet:'heart'}[action],{feed:'#f9b4ae',wash:'#9feef3',pet:'#ffbecd'}[action]);
   }
   $('dock').onclick=e=>{const b=e.target.closest('[data-care]');if(b)care(b.dataset.care);};
-  let stroke=null,skipTap=false;
-  hero.onpointerdown=e=>{skipTap=false;stroke={x:e.clientX,y:e.clientY,distance:0};hero.setPointerCapture(e.pointerId);};
-  hero.onpointermove=e=>{
-    if(!stroke||skipTap||!overlay.hidden||activeEgg())return;
-    stroke.distance+=Math.hypot(e.clientX-stroke.x,e.clientY-stroke.y);stroke.x=e.clientX;stroke.y=e.clientY;
-    if(stroke.distance>=36){skipTap=true;care('pet');}
-  };
-  hero.onpointercancel=hero.onpointerup=()=>{stroke=null;};
-  hero.onclick=e=>{if(e.detail&&skipTap){skipTap=false;return;}if(activeEgg())warm();else care('pet');};
+  DragonStage.configure({stroke:()=>care('pet'),cue:creatureCue});
+  hero.onclick=e=>{if(e.detail&&DragonStage.consumesClick())return;if(activeEgg())warm();else care('pet');};
   function treeCommand(d){
     modal('Команда на ветке');
     panel.innerHTML='<div class="sheet stack">'+header(escapeHTML(d.name.toLocaleUpperCase('ru')),'Команда на ветке')+'<form id="command-on-branch" class="stack"><label for="phrase">Какую команду подать?</label><input class="field" id="phrase" autocomplete="off" maxlength="42"><button class="gold">Подать команду</button></form><div id="known" class="actions"></div><div id="response" class="msg" role="status"></div></div>';
@@ -137,8 +142,12 @@
     bindName(d);if($('evolve'))$('evolve').onclick=()=>{if(d.stage<2&&growth(d)>=1){d.stage++;save();sound('evolve');close();bounce();react(ages[d.stage]+'!');}};
   }
   function collection(){
-    modal('Коллекция');panel.innerHTML='<div class="sheet stack">'+header('ЖИТЕЛИ ДРЕВА','Коллекция')+
-      (s.dragons.length?'<div class="collection-grid">'+s.dragons.map(d=>'<button class="dragon-card '+(d.id===s.focus?'active':'')+'" data-id="'+d.id+'"><img src="'+sprite(d.species,d.stage)+'" alt=""><b>'+escapeHTML(d.name)+'</b><small>'+ages[d.stage]+'</small></button>').join('')+'</div>':'<p>Первый житель пока в скорлупе. Согрейте яйцо в гнезде.</p>')+
+    const cards=s.dragons.map(d=>{
+      const island=Habitat.islandName(d.id);
+      return '<button class="dragon-card '+(d.id===s.focus?'active':'')+'" data-id="'+d.id+'"><img src="'+sprite(d.species,d.stage)+'" alt=""><b>'+escapeHTML(d.name)+'</b><small>'+ages[d.stage]+(island?' · '+island:'')+'</small></button>';
+    });
+    modal('Коллекция');panel.innerHTML='<div class="sheet stack">'+header('ЖИТЕЛИ ДОЛИНЫ','Коллекция')+
+      (cards.length?'<div class="collection-grid">'+cards.join('')+'</div>':'<p>Первый житель пока в скорлупе. Согрейте яйцо в гнезде.</p>')+
       (s.eggs.length?'<button class="soft" id="eggs">'+glyph('egg')+'К гнезду · '+s.eggs.length+'</button>':'')+
       '<hr><h3>Семейства ToysBerry</h3><div class="collection-grid">'+families.map((f,i)=>'<button class="dragon-card" data-family="'+i+'"><img src="'+sprite(i,2)+'" alt=""><b>'+f+'</b></button>').join('')+'</div>'+
       '<button class="soft" id="add-toy">'+glyph('qr')+'Добавить игрушку</button></div>';
@@ -147,16 +156,43 @@
     if($('eggs'))$('eggs').onclick=()=>{s.focus='egg';save();close();};$('add-toy').onclick=()=>openMenu('qr');
   }
   function family(i){
-    modal('Семейство');panel.innerHTML='<div class="sheet stack">'+header('СЕМЕЙСТВА TOYSBERRY',families[i]+' дракон')+
-      '<div class="evo-line">'+ages.map((a,j)=>'<div class="evo-card"><img src="'+sprite(i,j)+'" alt=""><b>'+a+'</b></div>').join('')+'</div>'+
+    const rig=i>=6;
+    modal('Семейство');panel.innerHTML='<div class="sheet stack">'+header('АТЛАС ДРАКОНОВ',families[i])+
+      (rig?'<canvas class="atlas-rig" width="480" height="320" aria-label="Живая модель дракона"></canvas>':'')+
+      '<div class="evo-line">'+ages.map((a,j)=>{
+        const contents='<img src="'+sprite(i,j)+'" alt=""><b>'+a+'</b>';
+        return rig?'<button type="button" class="evo-card" data-atlas-stage="'+j+'" aria-pressed="'+(j===0)+'">'+contents+'</button>':'<div class="evo-card">'+contents+'</div>';
+      }).join('')+'</div>'+
       (i<2?'<h3>Из игрушки в игру</h3><div class="toy-pair"><figure><img src="'+groveAsset('assets/dragons/toy-'+(i===0?'leaf':'ember')+'.webp')+'" alt="Фотография игрушки"><figcaption>Игрушка ToysBerry</figcaption></figure><figure><img src="'+sprite(i,2)+'" alt="Большой дракон из игры"><figcaption>Дракон на древе</figcaption></figure></div>':'')+
       '<button class="soft" id="back-collection">Вернуться в коллекцию</button></div>';$('back-collection').onclick=collection;
+    if(rig){
+      const preview=panel.querySelector('.atlas-rig'),ctx=preview.getContext('2d'),buttons=[...panel.querySelectorAll('[data-atlas-stage]')];
+      let stage=0,frame=0,last=0;
+      const draw=(time=0)=>DragonStage.draw(ctx,{species:i,stage},'idle',time);
+      function tick(now){
+        if(!preview.isConnected)return;
+        if(now-last>34){last=now;if(!document.hidden&&!reduced.matches)draw(now/1000);}
+        frame=requestAnimationFrame(tick);
+      }
+      buttons.forEach((button,index)=>button.onclick=()=>{
+        stage=index;buttons.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===index)));draw();
+      });
+      draw();frame=requestAnimationFrame(tick);cleanup=()=>cancelAnimationFrame(frame);
+    }
   }
   function shop(){
-    modal('Лесная лавка');panel.innerHTML='<div class="sheet stack">'+header('УКРАШЕНИЯ ДРЕВА','Лесная лавка')+'<p>У вас '+s.coins+' пыльцы. Её приносят лесные игры.</p><div class="shop-grid">'+Grove.decor.map(({id,name,price})=>{
+    const missing = Math.max(0, Grove.eggPrice - s.coins);
+    const eggCard = '<div class="shop-card"><img src="'+groveAsset('assets/grove-v2/egg.webp')+'" alt=""><b>Таинственное яйцо</b>'+
+      '<p>Внутри — случайный дракон.</p><button class="gold" id="buy-egg" '+(missing?'disabled':'')+'>'+glyph('pollen')+' Купить за '+Grove.eggPrice+'</button>'+
+      (missing?'<small>Ещё '+missing+' пыльцы</small>':'')+'</div>';
+    modal('Лесная лавка');panel.innerHTML='<div class="sheet stack">'+header('ЯЙЦА И УКРАШЕНИЯ','Лесная лавка')+'<p>У вас '+s.coins+' пыльцы. Её дают за игры и задания Светика.</p>'+eggCard+'<div class="shop-grid">'+Grove.decor.map(({id,name,price})=>{
       const owned=s.owned.includes(id),equipped=s.equipped.includes(id);
       return '<div class="shop-card"><img src="'+groveAsset('assets/decor/'+id+'.webp')+'" alt=""><b>'+name+'</b><button class="'+(owned?'soft':'gold')+'" data-buy="'+id+'" '+(!owned&&price>s.coins?'disabled':'')+'>'+ (owned?(equipped?'Снять':'Разместить'):glyph('pollen')+' '+price)+'</button></div>';
     }).join('')+'</div><p>Украшения меняют вид вашего древа.</p></div>';
+    $('buy-egg').onclick=()=>{
+      if(!Grove.buyEgg())return;
+      close();sound('coin');toast('Таинственное яйцо ждёт в гнезде.');
+    };
     panel.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
       const item=Grove.decor.find(x=>x.id===b.dataset.buy),owned=s.owned.includes(item.id);
       if(!owned){if(s.coins<item.price)return;s.coins-=item.price;s.owned.push(item.id);}

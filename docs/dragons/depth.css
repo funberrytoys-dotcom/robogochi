@@ -1,8 +1,11 @@
 .depth-plane,#near-plane{position:absolute;inset:0;pointer-events:none}
 .depth-plane{transform-origin:0 0;transform:translate(var(--pan-x,0%),var(--pan-y,0%)) scale(var(--zoom,1));transition:transform .85s cubic-bezier(.2,.78,.25,1)}
-.depth-plane img{position:absolute;width:106%;height:106%;left:-3%;top:-3%;transform:translate3d(calc(var(--look-x,0px)*var(--factor)),calc(var(--look-y,0px)*var(--factor)),0);pointer-events:none}
+.depth-plane :is(img,.valley-waterfalls,.valley-scene){position:absolute;width:106%;height:106%;left:-3%;top:-3%;transform:translate3d(calc(var(--look-x,0px)*var(--factor)),calc(var(--look-y,0px)*var(--factor)),0);pointer-events:none}
+.depth-plane .valley-scene,.valley-active :is(img,.valley-waterfalls){visibility:hidden}
+.depth-plane .valley-ready{visibility:visible}
 .depth-plane.far{--factor:-.87}.depth-plane.middle{--factor:-.18}
 #near-plane{transform:translate3d(calc(var(--look-x,0px)*.62),calc(var(--look-y,0px)*.62),0);pointer-events:auto}
+.listik-visit{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transform:translate3d(calc(var(--look-x,0px)*.13),calc(var(--look-y,0px)*.13),0)}
 .tree-art{background:transparent}.foreground{transform:translate3d(calc(var(--look-x,0px)*1.22),calc(var(--look-y,0px)*1.22),0)}
 #habitat{touch-action:none;background:#719e88}
 #shrouds{position:absolute;inset:0;z-index:4;pointer-events:none}
@@ -12,4 +15,4 @@
 .mist-glimmer{position:absolute;width:2.7px;height:2.7px;background:#fff5be;border-radius:70%;box-shadow:0 0 3px 1px #ffe582,0 0 7px 2px #ffe3589c;animation:mist-hover var(--cycle) ease-in-out var(--delay) infinite alternate}
 @keyframes mist-hover{0%{opacity:.42;transform:translate(-3px,3px)}32%{opacity:.96}66%{opacity:.5}100%{opacity:.95;transform:translate(5px,-4px)}}
 #hero.egg{width:17%}
-@media(prefers-reduced-motion:reduce){.depth-plane,.mist-bank{transition:none}.mist-glimmer{animation:none}.depth-plane img,#near-plane,.foreground{transform:none}}
+@media(prefers-reduced-motion:reduce){.depth-plane,.mist-bank{transition:none}.mist-glimmer{animation:none}.depth-plane img,.valley-waterfalls,.valley-scene,#near-plane,.foreground{transform:none}}

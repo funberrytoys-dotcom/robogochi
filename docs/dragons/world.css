@@ -1,0 +1,54 @@
+#world{
+  inset:0 auto auto 0;
+  transform:var(--world-transform,none);
+  transition:transform .72s cubic-bezier(.22,.78,.25,1);
+  filter:none;
+}
+#habitat[data-gesture] #world,#habitat[data-gesture] .depth-plane{transition:none}
+#habitat{touch-action:none;background:#332540}
+#near-plane{transform:none}
+.root-floor{position:absolute;left:-165%;right:-165%;top:94.8%;height:165%;pointer-events:none;
+  background:linear-gradient(180deg,#3c3c24 0%,#262935 15%,#191d30 52%,#14192a 100%);
+  mask-image:linear-gradient(180deg,transparent,#000 3.7%)}
+.root-floor::before{content:'';position:absolute;inset:0 0 auto;height:14%;
+  background:url("assets/depth/world-ground.webp") center 77%/100% 520%;filter:saturate(.45) brightness(.49);
+  mask-image:linear-gradient(180deg,transparent,#000 21%,#000 46%,transparent 100%)}
+#island-homes{position:absolute;inset:0;pointer-events:none}
+.island-home{position:absolute;transform:translate(-50%,-21%);filter:saturate(.83) brightness(.94) sepia(.12);border:0;padding:0;background:none;pointer-events:auto}
+.island-home:disabled{pointer-events:none;opacity:1}
+.island-home img{display:block;width:100%;height:auto;pointer-events:none}
+#world .tree-art,#world .nest-rim{background:none;filter:none;mask-image:none}
+#world .nest-rim{clip-path:polygon(14% 60.5%,18% 60.75%,22.7% 60.5%,22.9% 61.8%,14% 61.8%)}
+#world .bark-shade{display:none}
+#tree-heart{left:48.9%;top:43.75%;width:14%;transform:translate(-50%,-50%);z-index:2}
+#tree-heart img{filter:saturate(1.23) brightness(1.18)}
+.heart-aura{inset:-27% -71%;background:radial-gradient(ellipse,#ffeb9d75 0%,#ffab6141 34%,#ff7b4816 55%,transparent 73%)}
+#heart-veins{transform:translate(-2%,2%);opacity:.55}
+#world #hero.egg,#world .fx-shell{width:2.4%}
+#world #hero.baby{width:2.7%}
+#world #hero.teen{width:4.2%}
+#world #hero.adult{width:6.3%}
+#world #hero.baby.rig-specimen{width:4.75%}
+#world #hero.teen.rig-specimen{width:6.5%}
+#world #hero.adult.rig-specimen{width:8.4%}
+.perch-stop{width:calc(24px / var(--world-zoom,1));height:calc(24px / var(--world-zoom,1));padding:calc(4px / var(--world-zoom,1));border-width:1px}
+.decor-lantern{left:25%;top:54%;width:5%;height:7%}
+.decor-blossoms{left:5%;top:59%;width:10%;height:6%}
+.decor-mushrooms{left:28%;top:58%;width:8%;height:5%}
+#shrouds{mask-image:none}
+.dragon-stage-rig{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;visibility:hidden}
+#hero.rig-specimen .dragon-stage-rig{inset:auto auto -6% -8%;width:116%;height:auto}
+.dragon-rig-visible #hero-img{visibility:hidden}
+.dragon-rig-visible .dragon-stage-rig{visibility:visible;filter:drop-shadow(0 3px 2px #22102050)}
+.dragon-lifted :is(#hero-img,.dragon-stage-rig,.hero-halo){visibility:hidden}
+.dragon-stage-lift{position:absolute;height:auto;pointer-events:none;z-index:10;transform:translate(-50%,-30%);filter:drop-shadow(0 10px 8px #1a102c55)}
+.dragon-stage-lift[hidden]{display:none}
+.atlas-rig{display:block;width:100%;height:auto;max-height:25svh;object-fit:contain;border:1px solid #cbb78250;border-radius:13px;background:radial-gradient(ellipse,#51837875,#18333b90 67%,#252540)}
+.evo-card[data-atlas-stage]{color:inherit;cursor:pointer}
+.evo-card[data-atlas-stage][aria-pressed="true"]{box-shadow:inset 0 0 0 1px #f1d390;background:#655faa28}
+.world-fog{display:block;width:100%;height:100%;pointer-events:none}
+.depth-plane.middle img{filter:saturate(.88) brightness(.75) hue-rotate(12deg);opacity:.70}
+.forest-light{opacity:.47;mix-blend-mode:screen}
+.foreground{opacity:.42}
+.vignette{background:radial-gradient(ellipse at 48% 50%,transparent 42%,#271e3c42 90%),linear-gradient(0deg,#192a3eea,transparent 23%,transparent 87%,#291e3e65)}
+@media(prefers-reduced-motion:reduce){#world,.depth-plane{transition:none}}
