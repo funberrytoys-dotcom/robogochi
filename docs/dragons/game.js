@@ -26,7 +26,8 @@
   function creatureCue(pose){
     sound('dragon-'+pose);
     if(dragonCues[pose])react(dragonCues[pose]);
-    if(['purr','growl','bite'].includes(pose))window.GroveHUD?.cue(pose);
+    if(pose==='lift')$('reaction').classList.remove('show');
+    if(['purr','growl','bite','lift','release'].includes(pose))GroveHUD.cue(pose);
   }
   function bounce(){hero.classList.remove('touched');void hero.offsetWidth;hero.classList.add('touched');clearTimeout(animTimer);animTimer=setTimeout(()=>hero.classList.remove('touched'),650);}
   function flourish(icon,color){

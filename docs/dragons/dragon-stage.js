@@ -53,7 +53,7 @@
     hero.classList.remove('dragon-lifted');delete game.dataset.dragonGrip;
   }
   function reset(){
-    if(grip)ignoreUntil=performance.now()+350;
+    if(grip){ignoreUntil=performance.now()+350;window.GroveHUD?.cue('release');}
     primary=undefined;touches.clear();clearHold();reaction=undefined;cleanupLift();
   }
   function setDragon(next){
@@ -78,7 +78,7 @@
     clearHold();reaction=undefined;landing=undefined;
     window.GroveCamera?.cancelInput();
     const bBox=hero.getBoundingClientRect();
-    grip={ids:[a,b],width:limit(bBox.width*1.78,151,265),x:0,y:0,swing:0,velocity:0};
+    grip={ids:[a,b],width:limit(bBox.width*1.86,182,280),x:0,y:0,swing:0,velocity:0};
     const mid=contacts();grip.x=mid.x;grip.y=mid.y;
     liftPointer(a);liftPointer(b);
     hero.classList.add('dragon-lifted');lifted.hidden=false;game.dataset.dragonGrip='held';
@@ -89,7 +89,11 @@
   function letGo(cancelled){
     const from=grip;
     grip=undefined;touches.clear();primary=undefined;clearHold();ignoreUntil=performance.now()+420;
-    if(cancelled||reduced.matches){cleanupLift();if(!cancelled)cue('release');return;}
+    if(cancelled||reduced.matches){
+      cleanupLift();
+      if(cancelled)window.GroveHUD?.cue('release');else cue('release');
+      return;
+    }
     landing={...from,at:performance.now()};game.dataset.dragonGrip='returning';cue('release');start();
   }
   function hold(id,pose,delay){

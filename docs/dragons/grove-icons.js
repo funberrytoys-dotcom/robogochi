@@ -37,7 +37,7 @@
     if(!painted[key]) return window.glyph(key);
     return '<svg class="grove-illustration gh-illustration" viewBox="0 0 48 48" aria-hidden="true" focusable="false" stroke-linecap="round" stroke-linejoin="round">'+painted[key]+'</svg>';
   }
-  const labels={purr:'Урчит',growl:'Рычит',bite:'Кусь!'};
+  const labels={purr:'Урчит',growl:'Рычит',bite:'Кусь!',lift:'На руках'};
   let dock,menu,game,last='',more,careDrawer,timer,activeDrawer,petThumb='';
   const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function closeDrawers(restore=false) {
@@ -124,11 +124,12 @@
     if(image && image.getAttribute('src')!==sprite)image.src=sprite;
   }
   function cue(kind){
-    if(!labels[kind])return;
     const out=document.getElementById('gh-cue');if(!out)return;
-    clearTimeout(timer);out.dataset.cue=kind;out.innerHTML=icon(kind)+'<span>'+labels[kind]+'</span>';
+    if(kind==='release'){clearTimeout(timer);out.classList.remove('visible');out.textContent='';delete out.dataset.cue;return;}
+    if(!labels[kind])return;
+    clearTimeout(timer);out.dataset.cue=kind;out.innerHTML=icon(kind==='lift'?'hand':kind)+'<span>'+labels[kind]+'</span>';
     out.classList.remove('visible');void out.offsetWidth;out.classList.add('visible');
-    timer=setTimeout(()=>{out.classList.remove('visible');out.textContent='';},1650);
+    if(kind!=='lift')timer=setTimeout(()=>{out.classList.remove('visible');out.textContent='';},1650);
   }
   window.GroveHUD=Object.freeze({mount,egg,pet,icon,cue,closeDrawers});
 })();
