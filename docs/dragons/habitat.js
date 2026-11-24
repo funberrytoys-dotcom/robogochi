@@ -50,10 +50,11 @@
     const near=count===4?overview:!overview;
     const label=near?'Осмотреть древо':'Приблизиться к дракону';
     camera.title=label;camera.setAttribute('aria-label',label);camera.setAttribute('aria-pressed',String(overview));
-    const zoom=near?[1.65,1.34,1.13,1.5][count-1]:1;
+    const zoom=near?[1.25,1.30,1.13,1.5][count-1]:1;
     const dx=Math.max(1-zoom,Math.min(0,.50-(active.x/100)*zoom));
     const dy=Math.max(1-zoom,Math.min(0,.59-(active.y/100)*zoom));
     world.style.setProperty('--camera-z',zoom);world.style.setProperty('--camera-x',dx*100+'%');world.style.setProperty('--camera-y',dy*100+'%');
+    GroveDepth.setView(count,zoom,dx,dy);
     field.dataset.boughs=count;field.dataset.view=near?'near':'wide';
   }
   camera.onclick=()=>{overview=!overview;refresh();};

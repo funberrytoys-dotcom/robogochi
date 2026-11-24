@@ -1,0 +1,18 @@
+#world .flight-moving {
+  left: var(--flight-x) !important;
+  top: var(--flight-y) !important;
+  z-index: 3;
+}
+#world .flight-over > img:not(.flight-cel),
+#world .flight-over > .hero-halo { opacity: 0; }
+#world .flight-moving > .flight-cel {
+  position: absolute; left: 50%; bottom: -9%;
+  display: block; width: 112%; max-width: none; max-height: none; height: auto;
+  pointer-events: none; transform: translateX(-50%);
+  animation: none; opacity: 1;
+  filter: drop-shadow(0 2px 0 #24524638);
+}
+#world .flight-right > .flight-cel { transform: translateX(-50%) scaleX(-1); }
+@media (prefers-reduced-motion: reduce) {
+  #world .flight-cel { display: none; }
+}

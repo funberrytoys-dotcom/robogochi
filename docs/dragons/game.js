@@ -48,9 +48,6 @@
   $('menu').onclick=e=>{const b=e.target.closest('[data-page]');if(b)openMenu(b.dataset.page);};
 
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
-  if(matchMedia('(pointer:fine)').matches&&!reduced.matches){
-    $('game').addEventListener('pointermove',e=>{if(!overlay.hidden)return;$('game').style.setProperty('--mx',((e.clientX/innerWidth-.5)*7)+'px');$('game').style.setProperty('--my',((e.clientY/innerHeight-.5)*4)+'px');});
-  }
   $('residents').onclick=e=>{const b=e.target.closest('[data-friend]');if(b&&!hatchBusy){s.focus=b.dataset.friend;save();render();sound('pet');react('♥');}};
   function render(){
     const d=current(),egg=activeEgg();

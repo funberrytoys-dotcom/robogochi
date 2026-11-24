@@ -1,0 +1,28 @@
+.depth-plane.middle img{filter:brightness(.68) saturate(.7) hue-rotate(14deg)}
+.tree-art,.nest-rim,.bough-layer{filter:saturate(.77) brightness(.84)}
+.bark-shade{position:absolute;pointer-events:none;inset:0;background:linear-gradient(145deg,#364e9644,transparent 28%,#1f3b4912 62%,#242c5450);mix-blend-mode:multiply}
+#world .tree-art{mask-image:linear-gradient(90deg,transparent,#000 2%,#000 98%,transparent)}
+.forest-light{position:absolute;inset:-5%;pointer-events:none;background:linear-gradient(113deg,transparent 13%,#cefff618 17%,transparent 23%,transparent 31%,#abebe715 33%,transparent 37%,transparent 64%,#ffd99815 68%,transparent 73%);mix-blend-mode:screen;animation:canopy-light 13s ease-in-out infinite alternate;transform-origin:40% 0}
+@keyframes canopy-light{from{opacity:.46;transform:skewX(-2deg)}to{opacity:.89;transform:skewX(3deg)}}
+#heart-veins{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+#heart-veins .sap{fill:none;stroke-linecap:round;stroke-linejoin:round}
+#heart-veins .sap-lit{stroke:#ffca78;stroke-width:.84;stroke-dasharray:11 103;animation:sap-rise 7s linear infinite;opacity:.75}
+@keyframes sap-rise{from{stroke-dashoffset:112}to{stroke-dashoffset:0}}
+#tree-heart{position:absolute;left:52.8%;top:42%;width:27%;aspect-ratio:512 / 1011;transform:translate(-46%,-53%);appearance:none;padding:0;border:0;background:transparent;cursor:pointer;overflow:visible;isolation:isolate}
+#tree-heart img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.heart-aura{position:absolute;inset:-12% -35%;border-radius:50%;background:radial-gradient(ellipse,#ffe29670 0%,#ffab6138 34%,#ff986313 52%,transparent 68%);mix-blend-mode:screen;animation:heart-breath 3.7s ease-in-out infinite}
+.heart-fire{position:absolute;left:32%;top:36%;width:37%;height:37%;border-radius:50%;background:radial-gradient(ellipse,#fff4a04d,#ffd98022 37%,transparent 72%);mix-blend-mode:screen;animation:heart-breath 3.7s ease-in-out infinite}
+@keyframes heart-breath{0%,100%{opacity:.45;transform:scale(.86)}52%{opacity:1;transform:scale(1.12)}}
+#game.heart-awake .heart-aura{animation:heart-answer 1.8s ease-out both}
+#game.heart-awake .sap-lit{stroke:#fff2bc;stroke-width:1.5}
+.heart-ember{position:absolute;left:51%;top:52%;width:2px;height:3px;border-radius:80% 30% 70%;background:#fff5bd;box-shadow:0 0 4px #f8b873;pointer-events:none;animation:ember-rise var(--life) linear var(--delay) infinite;opacity:0}
+@keyframes ember-rise{0%{opacity:0;transform:translate(0,0)}19%{opacity:.95}63%{opacity:.66}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(56deg)}}
+@keyframes heart-answer{0%{opacity:.5;transform:scale(.87)}30%{opacity:1;transform:scale(1.48)}100%{opacity:.48;transform:scale(1)}}
+body::before{background:linear-gradient(#10192f9c,#111e2dbe),url("assets/depth/valley.webp") center/cover}
+.foreground{filter:brightness(.75) saturate(.86)}
+.vignette{background:radial-gradient(ellipse 85% 78% at 50% 48%,transparent 43%,#18234040 80%,#121c2b77),linear-gradient(0deg,#142e37ed,transparent 25%,transparent 89%,#18343d40)}
+@media(prefers-reduced-motion:reduce){.forest-light,#heart-veins .sap-lit,.heart-aura,.heart-fire,.heart-ember,#game.heart-awake .heart-aura{animation:none}}
+
+/* The heat of the living core thins out the closest wisps. */
+#shrouds{mask-image:radial-gradient(ellipse 9% 7% at 52.8% 42%,transparent 24%,#000 100%)}
+.mist-bank img{filter:brightness(.81) saturate(.86)}

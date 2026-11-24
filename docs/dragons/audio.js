@@ -13,10 +13,16 @@
   const playing = new Set();
   const limits = { click: 180, pet: 420, egg: 220, feed: 350, school: 300 };
   const music = new Audio();
-  music.src = file("dragon-in-the-leaves");
-  music.loop = true;
+  const tracks = ["dragon-in-the-leaves", "wheat-homecoming"];
+  let track = 0;
   music.volume = 0.30;
   music.preload = "none";
+  music.src = file(tracks[track]);
+  music.addEventListener("ended", () => {
+    track = (track + 1) % tracks.length;
+    music.src = file(tracks[track]);
+    if (activated && audible && !document.hidden) start();
+  });
   let audible = true;
   let activated = false;
 
