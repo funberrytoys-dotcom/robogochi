@@ -1,6 +1,8 @@
 (() => {
   const world=document.querySelector('#world'),field=document.querySelector('#habitat');
   const stops=document.querySelector('#stops');
+  field.addEventListener('selectstart',event=>event.preventDefault());
+  field.addEventListener('dragstart',event=>event.preventDefault());
   const names=['Гнездо','Цветущая ветвь','Ветвь светляков','Золотой уступ','Солнечная крона','Тропа к сердцу','Корни Древа'];
   const mounts=GroveCamera.mounts,nest=mounts[0];
   const islands=[
@@ -14,6 +16,7 @@
     const island=document.createElement('button'),art=new Image();
     island.className='island-home';island.type='button';island.title=name;island.disabled=true;
     island.style.left=x+'%';island.style.top=y+'%';island.style.width=width+'%';
+    art.draggable=false;
     art.src=groveAsset('assets/depth/detail/'+asset+'.webp');art.alt='';
     island.append(art);landscape.append(island);return island;
   });

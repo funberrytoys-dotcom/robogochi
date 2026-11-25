@@ -71,6 +71,7 @@
     hero.setAttribute('aria-label',egg?'Согреть яйцо':'Погладить дракона · '+d.name);
     if(egg)GroveHUD.egg({warmth:egg.warmth});
     else GroveHUD.pet({name:d.name,stage:ages[d.stage],sprite:src,sleeping:d.sleeping,canGrow:d.stage<2&&growth(d)>=1,hasCommand:Object.keys(d.tricks).length>0});
+    window.GroveForage?.sync();
   }
   function plural(n,forms){return forms[n%100>10&&n%100<20?2:n%10===1?0:n%10>=2&&n%10<=4?1:2];}
   function warm(){
@@ -82,11 +83,12 @@
   }
   function arrival(d){
     modal('Вылупление');panel.innerHTML='<div class="sheet stack born-card">'+header(d.stage===2?'ОСОБОЕ ВЫЛУПЛЕНИЕ':'ПЕРВАЯ ВСТРЕЧА',d.stage===2?'Большой дракон!':'Дракоша вылупился!')+'<img class="pet-portrait" src="'+sprite(d.species,d.stage)+'" alt="'+families[d.species]+' дракон"><p>'+families[d.species]+' дракон осваивается в гнезде. Как его назвать?</p><form id="name-form" class="stack"><input class="field" id="pet-name" aria-label="Имя дракона" maxlength="20"><button class="gold">Домой, на древо</button></form></div>';
-    bindName(d);
+    bindName(d,true);
   }
-  function bindName(d){
+  function bindName(d,welcome=false){
     $('pet-name').value=d.name;
-    $('name-form').onsubmit=e=>{e.preventDefault();d.name=$('pet-name').value.trim().slice(0,20)||names[d.species];save();sound('pet');close();react('♥');};
+    $('name-form').onsubmit=e=>{e.preventDefault();d.name=$('pet-name').value.trim().slice(0,20)||names[d.species];save();sound('pet');close();react('♥');
+      if(welcome && window.GroveForage && Branches.count()===1 && hero.dataset.treeSeat==='0')toast('Сорви ягоду с ветки и коснись дракоши.');};
   }
   function care(action){
     if(action==='warm'){warm();return;}
@@ -104,6 +106,7 @@
     const [stat,amount,fx,words]=item,before=d.needs[stat];
     d.needs[stat]=Math.min(100,before+amount);if(before<96)d.xp+=2;
     save();if(action==='feed'||action==='pet')Branches.event('care');render();
+    if(action==='feed')window.ResidentMotion?.feed();
     if(action==='pet'){
       const pose=d.needs.fun>=78?'purr':'cuddle';
       DragonStage.express(pose,1300);creatureCue(pose);
@@ -140,6 +143,11 @@
       (d.stage<2&&growth(d)>=1?'<button class="gold" id="evolve">'+glyph('spark')+'Эволюция</button>':'')+
       '<form class="stack" id="name-form"><div><label for="pet-name">Имя</label><div class="name-line"><input class="field" id="pet-name" maxlength="20"><button class="soft">Сохранить</button></div></div></form></div>';
     bindName(d);if($('evolve'))$('evolve').onclick=()=>{if(d.stage<2&&growth(d)>=1){d.stage++;save();sound('evolve');close();bounce();react(ages[d.stage]+'!');}};
+  }
+  function invitationSheet(title){
+    modal(title);
+    panel.innerHTML='<div class="sheet stack forage-sheet">'+header('ЦВЕТОК НА ВЕТВИ',title)+'<div class="forage-choices"></div></div>';
+    return panel.querySelector('.forage-choices');
   }
   function collection(){
     const cards=s.dragons.map(d=>{
@@ -211,6 +219,8 @@
     }
   });
   const entry=ToyQR.token(location.href);if(entry){const problem=Grove.redeem(entry);toast(problem||'Яйцо вашей игрушки в гнезде.');}
+  window.GroveForage?.configure({feed:()=>care('feed'),sound,toast,invitationSheet,close,
+    nest:()=>{s.focus='egg';save();render();GroveCamera.centerHome();}});
   Branches.initialize(Grove);
   window.addEventListener('grove-branches-changed',()=>{render();GroveAir.stir(hero);});
   audioUI();render();

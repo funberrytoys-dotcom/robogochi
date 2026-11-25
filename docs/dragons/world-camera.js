@@ -5,16 +5,17 @@
   const button = document.querySelector('#overview');
   const overlay = document.querySelector('#overlay');
   const mounts = [[25.9,60.55],[78,68.8],[80.5,41.2],[23,24.3],[86,28.5],[35,33],[23.5,86.1]];
-  const views={valley:1.03,tree:2.12,near:8.95};
+  const views={valley:1.47,tree:2.85,near:11.15,roots:1.96};
   const points = new Map();
   const clamp = (v,min,max) => Math.max(min,Math.min(max,v));
   let width, height, base, zoom = 1, x = 0, y = 0;
   const initialView = new URLSearchParams(location.search).get('view');
-  let mode = ['tree','valley'].includes(initialView) ? initialView : 'near', home = mounts[0], gesture, suppressUntil = 0;
+  let mode = ['tree','valley','roots'].includes(initialView) ? initialView : 'near', home = mounts[0], gesture, suppressUntil = 0;
 
   function layout(){
     const w = base*zoom, h = w*1.5;
-    if(mode==='tree'||mode==='valley'){x=(width-w)/2;y=(height-h)/2+(mode==='valley'?height*.045:4);}
+    if(mode==='roots'){x=width*.48-w*.48;y=height*.72-h*.944;}
+    else if(mode==='tree'||mode==='valley'){x=(width-w)/2;y=(height-h)/2+(mode==='valley'?height*.045:4);}
     else if(zoom<=1){
       const inset=(width-w)/2,sweep=width*(1-zoom)*1.28;
       x=clamp(x,inset-sweep,inset+sweep);
@@ -27,10 +28,11 @@
     world.style.width = w+'px';
     world.style.height = h+'px';
     world.style.setProperty('--world-transform',`translate3d(${x}px,${y}px,0)`);
-    const view=zoom<1.27?'valley':zoom<3.1?'tree':'near';
+    const view=zoom<1.85?'valley':zoom<3.5?'tree':'near';
     field.dataset.view = view;
     button.title = {near:'Осмотреть древо',tree:'Осмотреть долину',valley:'Вернуться к дракону'}[view];
     button.setAttribute('aria-label',button.title);
+    field.dispatchEvent(new Event('grove-camera-changed'));
     GroveDepth.setView(zoom,(x+base*zoom/2-width*.5)/width,(y+base*.75*zoom-height*.5)/height);
   }
 
@@ -59,6 +61,14 @@
     else if(changed && (mode==='near' || point[0]<0 || point[0]>100))centerHome();
   }
 
+  function revealBranch(index){
+    const point=mounts[index];
+    if(!point)return;
+    zoom=3.55;mode='free';
+    x=width*.53-point[0]/100*base*zoom;
+    y=height*.51-point[1]/100*base*1.5*zoom;
+    layout();
+  }
   function centerHome(){mode='near';frame();}
 
   function local(event){
@@ -72,7 +82,7 @@
   }
 
   function zoomAt(z,point,origin){
-    zoom=clamp(z,.50,10.8);
+    zoom=clamp(z,.47,12.8);
     x=point.x-origin.x*zoom;
     y=point.y-origin.y*zoom;
     mode='free';layout();
@@ -143,5 +153,5 @@
   });
   new ResizeObserver(resize).observe(field);
   function cancelInput(){points.clear();gesture=undefined;delete field.dataset.gesture;}
-  window.GroveCamera={mounts,focus,centerHome,cancelInput};
+  window.GroveCamera={mounts,focus,centerHome,cancelInput,revealBranch};
 })();

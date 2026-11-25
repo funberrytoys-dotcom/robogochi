@@ -161,5 +161,6 @@
   });
   reduced.addEventListener('change',()=>{render(performance.now());start();});
   window.DragonStage={setDragon,express,
+    motionState(){return {dragon,reaction,grip,landing,lifted};},
     configure(options){callbacks=options;},consumesClick(){return performance.now()<ignoreUntil;}};
 })();

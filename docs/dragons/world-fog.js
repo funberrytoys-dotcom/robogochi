@@ -1,10 +1,10 @@
 (() => {
   'use strict';
   const regions = [
-    [.76,.706,.314,.157,2], [.50,.625,.216,.154,2],
-    [.825,.418,.302,.140,3], [.184,.263,.277,.150,4],
-    [.84,.258,.274,.139,5], [.44,.107,.502,.170,6], [.39,.315,.205,.089,6],
-    [.52,.912,.530,.163,7], [.40,.785,.295,.124,7],
+    [.79,.692,.214,.082,2], [.87,.731,.125,.070,2],
+    [.825,.42,.195,.091,3], [.171,.255,.182,.081,4],
+    [.86,.256,.182,.094,5], [.50,.094,.244,.089,6], [.349,.33,.14,.061,6],
+    [.27,.858,.17,.063,7], [.36,.82,.12,.051,7],
   ];
   const clearings = [[.489,.437,.194,.125],[.259,.605,.169,.106]];
   const clamp = v => Math.max(0,Math.min(1,v));
@@ -50,7 +50,7 @@
         vec2 curls=vec2(cloud(p*.83+vec2(wind,0.)),cloud(p*.86+vec2(-wind,.9)));
         float billow=cloud(p+curls*2.25+vec2(-wind*.73,wind*.26));
         float ripple=cloud(p*1.92+vec2(wind*.52,-wind*.31));
-        vec2 sway=(curls-.5)*vec2(.091,.081);
+        vec2 sway=(curls-.5)*vec2(.063,.055);
         float bank=0.;
         for(int i=0;i<${regions.length};i++){
           float g=1.-smoothstep(.45,1.19,d(uv+sway,region[i]));
@@ -64,9 +64,9 @@
         float edge=smoothstep(0.,width,uv.x)*smoothstep(0.,width,1.-uv.x)*
           smoothstep(0.,.17+.05*folds,uv.y)*smoothstep(0.,.17+.06*folds,1.-uv.y);
         float rim=exp(-pow((bank-.35)*5.,2.))*smoothstep(.33,.76,folds);
-        vec3 color=mix(vec3(.048,.058,.141),vec3(.225,.179,.339),smoothstep(.27,.72,folds));
+        vec3 color=mix(vec3(.11,.137,.245),vec3(.285,.258,.403),smoothstep(.27,.72,folds));
         color=mix(color,vec3(.51,.37,.48),rim*.72);
-        gl_FragColor=vec4(color,alpha*edge*(.91+.065*folds));
+        gl_FragColor=vec4(color,alpha*edge*(.82+.105*folds));
       }`;
     const program=gl.createProgram();
     for(const [kind,source] of [[gl.VERTEX_SHADER,vertex],[gl.FRAGMENT_SHADER,fragment]]){

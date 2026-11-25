@@ -18,10 +18,10 @@
   function paint(){
     ctx.clearRect(0,0,w,h);const t=clock, obscured=GroveDepth.wildlifeMask(canvas);
     const distance=habitat.dataset.view==='valley'?.52:habitat.dataset.view==='tree'?.74:1;
-    for(let i=0;i<28;i++){
+    for(let i=0;i<15;i++){
       const f=i*2.39996, near=i%5===0;
       const x=w*(.08+.84*((i*.618)%1)+.061*Math.sin(t*.33+f)+.013*Math.sin(t*1.23-f));
-      const y=h*(.20+.63*((i*.423+0.31)%1)+.03*Math.sin(t*.49-f));const size=(near?14:8.5)*distance;
+      const y=h*(.20+.63*((i*.423+0.31)%1)+.03*Math.sin(t*.49-f));const size=(near?8:4.5)*distance;
       ctx.globalAlpha=.30+.66*(.5+.5*Math.sin(t*(.9+i%3*.22)+f));ctx.drawImage(glow,x-size,y-size,size*2,size*2);
     }
     for(let i=0;i<14;i++){
@@ -32,11 +32,12 @@
       ctx.beginPath();ctx.ellipse(0,0,1.8+1.4*Math.abs(Math.cos(u*10+i)),1.5,0,0,TAU);ctx.fill();ctx.restore();
     }
     flight.forEach(([cx,cy,rx,ry,base],i)=>{
+      if(i>=3 && !call)return;
       const img=art[i%4];if(!img.naturalWidth)return;const phase=t*(.38+i*.041)+i*2.07;
       let x=w*(cx+Math.sin(phase)*rx), y=h*(cy+Math.sin(phase*1.6+.4)*ry)+Math.sin(t*3+i)*2;
       const visit=call?Math.max(0,1-(clock-call.time)/3.2):0;
       if(visit&&i<3){const blend=Math.sin(visit*Math.PI)*.88;x+=(call.x+Math.sin(phase*3)*36-x)*blend;y+=(call.y-17+Math.cos(phase*3)*20-y)*blend;}
-      if(obscured?.(x,y) || obscured?.(x-8,y) || obscured?.(x+8,y))return;
+      if((distance===1 && x>w*.22 && x<w*.59 && y>h*.41 && y<h*.65) || obscured?.(x,y) || obscured?.(x-8,y) || obscured?.(x+8,y))return;
       const size=base*Math.min(1.4,Math.max(.82,w/400))*distance, width=size*(.23+.77*Math.abs(Math.sin(t*(5.6+i*.42)+i*.7)));
       ctx.save();ctx.translate(x,y);ctx.rotate(.22*Math.sin(phase*1.8)+.65*Math.cos(phase));ctx.globalAlpha=i<4?.97:.78;ctx.drawImage(img,-width/2,-size*.39,width,size*.78);ctx.restore();
     });

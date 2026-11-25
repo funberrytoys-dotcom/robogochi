@@ -7,12 +7,8 @@
 #habitat[data-gesture] #world,#habitat[data-gesture] .depth-plane{transition:none}
 #habitat{touch-action:none;background:#332540}
 #near-plane{transform:none}
-.root-floor{position:absolute;left:-165%;right:-165%;top:94.8%;height:165%;pointer-events:none;
-  background:linear-gradient(180deg,#3c3c24 0%,#262935 15%,#191d30 52%,#14192a 100%);
-  mask-image:linear-gradient(180deg,transparent,#000 3.7%)}
-.root-floor::before{content:'';position:absolute;inset:0 0 auto;height:14%;
-  background:url("assets/depth/world-ground.webp") center 77%/100% 520%;filter:saturate(.45) brightness(.49);
-  mask-image:linear-gradient(180deg,transparent,#000 21%,#000 46%,transparent 100%)}
+.root-floor{position:absolute;pointer-events:none;left:-190%;right:-190%;top:96%;height:180%;background:linear-gradient(#526953,#294e4b 11%,#233d42 43%,#172d38);border-radius:50% 47% 0 0 / 2% 2% 0 0}
+.skinned-wood .root-floor{visibility:hidden}
 #island-homes{position:absolute;inset:0;pointer-events:none}
 .island-home{position:absolute;transform:translate(-50%,-21%);filter:saturate(.83) brightness(.94) sepia(.12);border:0;padding:0;background:none;pointer-events:auto}
 .island-home:disabled{pointer-events:none;opacity:1}
@@ -40,7 +36,7 @@
 #world #hero.teen:not([data-island-home]){width:4.1%}
 #world #hero.adult:not([data-island-home]){width:6.8%}
 .perch-stop{width:24px;height:24px;padding:4px;border-width:1px}
-.decor-lantern{left:25%;top:54%;width:5%;height:7%}
+.decor-lantern{left:27.5%;top:54.7%;width:1.4%;height:1.9%}
 .decor-blossoms{left:5%;top:59%;width:10%;height:6%}
 .decor-mushrooms{left:28%;top:58%;width:8%;height:5%}
 #shrouds{mask-image:none}
@@ -55,3 +51,29 @@
 .foreground{opacity:.42}
 .vignette{background:radial-gradient(ellipse at 48% 50%,transparent 42%,#271e3c42 90%),linear-gradient(0deg,#192a3eea,transparent 23%,transparent 87%,#291e3e65)}
 @media(prefers-reduced-motion:reduce){#world,.depth-plane{transition:none}}
+
+#habitat,#habitat *{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#habitat img{-webkit-user-drag:none}
+.island-home:focus:not(:focus-visible){outline:none}
+.island-home:focus-visible{outline:none}.island-home:focus-visible img{filter:drop-shadow(0 0 3px #ffe4ae)}
+.wood-skin{position:absolute;display:block;pointer-events:none}
+.nursery-fallback{position:absolute;pointer-events:none;left:21.19%;top:58.2%;width:14.26%}
+.skinned-wood :is(#elder-rig,.nursery-fallback){visibility:hidden}
+#game .foreground,.depth-plane.middle{display:none}
+.depth-plane.far{background:linear-gradient(#94c7d4,#7dc3bd 60%,#427e7c)}
+.nursery-nest{top:60.03%;width:4.65%;left:23.575%}
+#world #hero.baby:not([data-island-home]){width:2.95%}
+#world #hero.baby #hero-img{filter:drop-shadow(0 1px 1px #26484160)}
+#world #hero:not(.egg) .hero-halo{inset:88% 12% -4%;background:radial-gradient(ellipse,#34493c99,transparent 70%);opacity:.65}
+#tree-heart{width:9.2%;aspect-ratio:100/160;--beat:.56}
+#tree-heart img{transform:scale(calc(.91 + var(--beat)*.115));filter:brightness(calc(.94 + var(--beat)*.35))}
+#tree-heart .heart-aura{inset:-49% -77%;background:radial-gradient(ellipse,#ffe9aa80 5%,#d4e9ba50 27%,#e7a79022 49%,transparent 72%);animation:none;opacity:calc(.22 + var(--beat)*.62);transform:scale(calc(.79 + var(--beat)*.27))}
+#tree-heart .heart-fire{inset:33% 33% 27%;width:auto;height:auto;animation:none;opacity:var(--beat);background:radial-gradient(ellipse,#fffce5a6,transparent 71%)}
+#heart-veins{opacity:.34}
+#habitat[data-light=night] :is(.nursery-nest,.root-woods,.nursery-fallback){filter:brightness(.71) saturate(.85) hue-rotate(12deg)}
+#habitat[data-view=near] .forest-light{opacity:.21}
+
+#game.heart-awake #heart-veins{opacity:.93}
+#game.heart-awake .sap-lit{stroke:#ffefba;stroke-width:1.7;stroke-dasharray:17 95;animation:wood-current 1.32s cubic-bezier(.21,.61,.22,1) both;animation-delay:calc(var(--stream-order)*.038s)!important}
+@keyframes wood-current{0%{opacity:0;stroke-dashoffset:17}12%{opacity:1}78%{opacity:.92}100%{opacity:0;stroke-dashoffset:-110}}
+@media(prefers-reduced-motion:reduce){#game.heart-awake .sap-lit{animation:none;opacity:.62}}

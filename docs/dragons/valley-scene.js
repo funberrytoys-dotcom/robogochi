@@ -18,7 +18,7 @@
     varying vec2 uv;
     uniform sampler2D picture, waveMap, swellMap;
     uniform vec4 region, flowPath;
-    uniform float clock, phase, rain, layer, haze, aspect, opacity, fire, skyRise;
+    uniform float clock, phase, rain, layer, haze, aspect, opacity, fire, skyRise, nurseryWorld;
     float hash(vec2 p){
       p=fract(p*vec2(.1031,.11369));
       p+=dot(p,p.yx+19.19);
@@ -145,7 +145,13 @@
           // Fade the painted horizon. Keep dark silhouettes of branches.
           float tree=1.-smoothstep(.25,.53,max(max(s.r,s.g),s.b));
           float horizon=smoothstep(.166,.309,uv.y);
-          s.a*=mix(max(tree,horizon),smoothstep(.195,.35,uv.y),fire);
+          if(nurseryWorld<.5)s.a*=mix(max(tree,horizon),smoothstep(.195,.35,uv.y),fire);
+          else {
+            float fallX=.886+.012*sin((uv.y-.49)*64.);
+            float ribbon=(1.-smoothstep(.002,.013,abs(uv.x-fallX)))*smoothstep(.472,.49,uv.y)*(1.-smoothstep(.524,.546,uv.y));
+            float spray=noise(vec2(uv.x*235.,uv.y*96.-clock*1.9));
+            s.rgb+=vec3(.13,.19,.19)*ribbon*spray;
+          }
         }
         if(layer>3.15&&layer<3.45)
           s.a*=smoothstep(0.,.15,uv.y)*(1.-smoothstep(.88,1.,uv.y));
@@ -185,6 +191,7 @@
     const assetNames=['valley','mid','biplanes-green-04','biplanes-green-01','biplanes-spectre-03',
       'biplanes-green-00','biplanes-green-02','biplanes-snow-03','biplanes-storm-02',
       'biplanes-spectre-01','biplanes-lava-04','biplanes-cloud-03','biplanes-cloud-09','biplanes-cloud-12'];
+    if(detail)assetNames[0]='awakening/canopy-valley';
     const assets=await Promise.all(assetNames.map(name=>image(name,detail)));
     const maps=sequence?await Promise.all(sequence.water.map(async src=>{
       const map=new Image();map.src=src;await map.decode();return map;
@@ -195,6 +202,7 @@
     gl.linkProgram(program);
     if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));
     gl.useProgram(program);
+    gl.uniform1f(gl.getUniformLocation(program,'nurseryWorld'),detail?1:0);
     gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([0,0,1,0,0,1,1,1]),gl.STATIC_DRAW);
     const corner=gl.getAttribLocation(program,'corner');
@@ -277,7 +285,7 @@
       quad(1,11,landX,0,landWidth,landHeight,land);
       if(!reduced.matches){
         drawFx.clearRect(0,0,fx.width,fx.height);
-        GroveWaterfalls.draw(drawFx,t,0,0,fx.width,fx.height);
+        if(!detail)GroveWaterfalls.draw(drawFx,t,0,0,fx.width,fx.height);
         gl.bindTexture(gl.TEXTURE_2D,life);
         gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,gl.RGBA,gl.UNSIGNED_BYTE,fx);
         quad(2,11,landX,0,landWidth,landHeight,life);
@@ -296,7 +304,7 @@
       const highY=.28+.012*Math.sin(t*.32),nearY=(gameSunset?.51:-.12)+.014*Math.sin(t*.29+2);
       const [high,middle,near]=formations[formation].map(index=>library[index]);
       const drift=t*.047;
-      if(gameSunset)horizon.forEach(([px,py,wide,tall,sprite,z],i)=>{
+      if(gameSunset&&!detail)horizon.forEach(([px,py,wide,tall,sprite,z],i)=>{
         quad(3,z,px+.032*Math.sin(t*.33+i*2),py+.012*Math.sin(t*.41+i),wide,tall,library[sprite],whole,.30+i%2*.14);
       });
       if(sunset){
@@ -305,12 +313,17 @@
         quad(3.1,12,-.74+.16*Math.sin(drift*.75),.27,1.14,.18,library[10],whole,0,.54);
       }
       quad(3,10,-.30+.20*Math.sin(drift),.46,.87,.17,library[9],whole,.42,.44+rain*.17);
-      quad(3,9,-.56,highY,.27,.15,high,whole,.26);
+      if(detail){
+        // A little satellite shelf shares the lee of the higher island.
+        quad(3,9.5,-.67,highY-.028,.11,.052,middle,whole,.69,.89);
+        quad(3,9,-.58,highY,.20,.093,high,whole,.55);
+        quad(3,8.7,-.52,highY-.023,.079,.043,library[4],whole,.57);
+      }else quad(3,9,-.56,highY,.27,.15,high,whole,.26);
       quad(3,8,camera?.15:.77,.41+.008*Math.sin(t*.24+2),.18,.11,middle,whole,.31);
       quad(3,7,.12+.24*Math.sin(drift*.83+1),-.30,.95,.10,library[10],whole,.36,.35+rain*.17);
-      quad(3,6,.64,nearY,.44,.25,near,whole,.12);
-      if(formation===0)quad(5,6,.67,nearY-.042,.064,.22,land);
-      if(!reduced.matches){
+      quad(3,6,detail?.91:.64,nearY,detail?.25:.44,detail?.143:.25,near,whole,detail?.42:.12);
+      if(formation===0&&!detail)quad(5,6,.67,nearY-.042,.064,.22,land);
+      if(!reduced.matches&&!detail){
         drawNest.clearRect(0,0,nestFx.width,nestFx.height);
         GroveWaterfalls.drawResident(drawNest,t,nestFx.width,nestFx.height);
         gl.bindTexture(gl.TEXTURE_2D,resident);
@@ -375,7 +388,7 @@
     canvas.setAttribute('aria-hidden','true');
     plane.prepend(canvas);
     const params=new URLSearchParams(location.search);
-    mount(canvas,{control:document.getElementById('habitat'),gameSunset:!params.has('sky'),detail:true}).then(scene=>{
+    mount(canvas,{control:document.getElementById('habitat'),gameSunset:params.get('sky')==='sunset',detail:true}).then(scene=>{
       plane.classList.add('valley-active');
       GroveValley.setAtmosphere=scene.setAtmosphere;
       GroveValley.setVantage=scene.setVantage;

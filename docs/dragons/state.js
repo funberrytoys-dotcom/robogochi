@@ -78,6 +78,26 @@
     save();
     return true;
   }
+  const flowerLures = {dew:[0,2,3], resin:[1,4,5]};
+  function canInvite(index) {
+    return Number.isInteger(index) && index>=1 && index<Math.min(s.branches?.open||1,7) &&
+      s.dragons.length>0 && !s.boughInvitations?.[index];
+  }
+  function invite(index,lure) {
+    if(!canInvite(index) || !Object.hasOwn(flowerLures,lure))return null;
+    const family=flowerLures[lure], known=new Set([...s.dragons,...s.eggs].map(record=>record.species));
+    const missing=family.filter(species=>!known.has(species));
+    const pool=missing.length?missing:family;
+    const egg=makeEgg();
+    egg.species=pool[Math.floor(Math.random()*pool.length)];
+    egg.invitation={index,lure};
+    // Keep both paid eggs and partially warmed eggs in the order in which they arrived.
+    s.eggs.push(egg);
+    s.boughInvitations={...s.boughInvitations,[index]:lure};
+    s.focus='egg';
+    save();
+    return egg;
+  }
   function redeem(code) {
     if(!Object.hasOwn(codes,code))return 'Такого кода нет в коллекции прототипа.';
     if(s.redeemed.includes(code))return 'Это яйцо уже получено на вашем древе.';
@@ -91,6 +111,7 @@
     if(!egg)return;
     if(++egg.warmth<3){save();return;}
     const d={id:globalThis.crypto?.randomUUID?.()||String(now())+'-'+Math.random(),species:egg.species,stage:egg.stage,name:names[egg.species],born:now(),xp:0,tricks:{},needs:{food:58,energy:78,clean:62,fun:50},sleeping:false,source:egg.code};
+    if(egg.invitation)d.invitation=egg.invitation;
     s.eggs.shift();s.dragons.push(d);s.focus=d.id;save();return d;
   }
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
@@ -107,5 +128,5 @@
     return Math.min(1,Math.max(d.xp/[18,45][d.stage],ageHours/[24,72][d.stage]));
   }
   tick(true);save();
-  window.Grove={s,names,families,ages,codes,decor,eggPrice,buyEgg,save,tick,current,redeem,warm,sprite,growth};
+  window.Grove={s,names,families,ages,codes,decor,eggPrice,buyEgg,canInvite,invite,save,tick,current,redeem,warm,sprite,growth};
 })();

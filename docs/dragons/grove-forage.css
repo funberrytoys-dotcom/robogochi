@@ -1,0 +1,43 @@
+#grove-forage {
+  position:absolute; z-index:4; left:calc(var(--nest-x) + 2.05%); top:calc(var(--nest-y) + .38%);
+  width:2.85%; aspect-ratio:1; padding:0; margin:0; border:0; border-radius:45%;
+  appearance:none; background:transparent; color:inherit; box-shadow:none;
+  transform:translateY(-84%); transform-origin:18% 86%; touch-action:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; user-select:none;
+}
+#grove-forage[hidden],.forage-hand[hidden],.forage-bloom[hidden]{display:none}
+#grove-forage svg,.forage-hand svg,.forage-bloom svg{display:block;width:100%;height:100%;overflow:visible}
+#grove-forage::after{content:'';position:absolute;inset:0;min-width:36px;min-height:36px}
+#grove-forage:disabled{opacity:1;pointer-events:none}
+#grove-forage:focus-visible{outline:2px solid #fff2be;outline-offset:2px}
+#grove-forage .forage-fruit{transition:opacity .18s ease}
+#grove-forage .forage-picked{opacity:0}
+.forage-petals{transform-origin:0 6px;transform:scale(.02);transition:transform .55s cubic-bezier(.18,.74,.32,1.12)}
+.forage-awake .forage-petals{transform:scale(.72);animation:forage-bloom-breathe 1.45s ease-in-out infinite alternate}
+.forage-flowered .forage-petals{transform:scale(1)}
+.forage-awake .forage-bud,.forage-flowered .forage-bud{opacity:0}
+.forage-awake .forage-corolla{filter:drop-shadow(0 0 4px #ffd8a3)}
+.forage-hand{position:absolute;z-index:6;pointer-events:none;width:31px;height:31px;transform:translate(-48%,-70%);filter:drop-shadow(0 3px 2px #46383b57)}
+.forage-cue{display:none;position:absolute;bottom:100%;left:50%;transform:translate(-50%,-5px);border-radius:15px;background:#284338ec;color:#fff0cc;padding:4px 9px;font:700 12px/1.2 Nunito,system-ui,sans-serif;white-space:nowrap;pointer-events:none}
+.forage-offer .forage-cue{display:block}
+.forage-offer .hero-halo{opacity:.9}
+.forage-bloom,#forage-waiting{position:absolute;z-index:4;appearance:none;border:0;padding:0;background:transparent;box-shadow:none;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.forage-bloom{width:3.2%;aspect-ratio:1.45;transform:translate(-106%,-88%);transform-origin:84% 88%}
+.forage-bloom:not(:disabled)::after{content:'';position:absolute;inset:50% auto auto 50%;width:max(100%,36px);height:max(100%,36px);transform:translate(-50%,-50%)}
+.forage-bloom:disabled{pointer-events:none;opacity:.74}
+.forage-bloom:not(:disabled) svg{filter:drop-shadow(0 0 3px #ffddae)}
+.forage-bloom:focus-visible,#forage-waiting:focus-visible{outline:2px solid #f9dfab;border-radius:50%}
+#forage-waiting{left:calc(var(--nest-x) - 2.85%);top:calc(var(--nest-y) + .27%);width:1.4%;transform:translate(-50%,-100%) rotate(-11deg)}
+#forage-waiting img{display:block;width:100%;pointer-events:none}
+#forage-waiting[hidden]{display:none}
+.forage-choices{display:grid;gap:9px}.forage-choices p{margin:0 0 4px}
+.forage-lure{display:flex;align-items:center;gap:16px;min-height:72px;padding:7px 13px;border:1px solid #789385;border-radius:14px;background:#244643;color:#ffe5b8;text-align:left;cursor:pointer}
+.forage-lure:active,.forage-lure:focus-visible{background:#365952;border-color:#e7c889}
+.forage-lure svg{width:50px;height:48px;flex:none}.forage-lure b,.forage-lure small{display:block}.forage-lure b{font:600 18px/1.2 Georgia,serif}.forage-lure small{color:#c8d6c0;font-size:12px;line-height:1.3;margin-top:4px}
+.forage-choices .forage-queue-note{font-size:12px;color:#ced6bd}
+#hero.forage-arrival .hero-halo{animation:forage-arrival 1.65s ease-out both}
+@keyframes forage-arrival{0%{opacity:0;transform:scale(.45)}38%{opacity:1;transform:scale(2.1)}100%{opacity:.5;transform:scale(1)}}
+.forage-bloom.revealed svg{animation:forage-unfurl 1.65s ease-out both;transform-origin:83% 88%}
+@keyframes forage-unfurl{0%,22%{transform:scale(.08) rotate(13deg);opacity:0}66%{transform:scale(1.12) rotate(-4deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes forage-bloom-breathe{to{transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.forage-petals,#grove-forage .forage-fruit{transition:none}.forage-bloom.revealed svg,.forage-awake .forage-petals,#hero.forage-arrival .hero-halo{animation:none}}

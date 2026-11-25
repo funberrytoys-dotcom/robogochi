@@ -2,7 +2,7 @@
   'use strict';
 
   const missions = {
-    1: { action: 'care', reward: 8, title: 'Забота о драконе', hint: 'Угости или погладь дракона.' },
+    1: { action: 'care', reward: 8, title: 'Первое угощение', hint: 'Сорви ягоду рядом с гнездом и коснись дракоши.' },
     2: { action: 'lesson', reward: 12, title: 'Первый трюк', hint: 'Разучи трюк в школе или повтори знакомый.' },
     3: { action: 'game', reward: 16, title: 'Лесная игра', hint: 'Закончи одну мини-игру.' },
     4: { action: 'care', reward: 20, title: 'Тепло кроны', hint: 'Угости или погладь дракона.' },
@@ -84,7 +84,7 @@
     grove.save();
     refresh();
     if (parts) parts.status.textContent = receipt;
-    window.dispatchEvent(new Event('grove-branches-changed'));
+    window.dispatchEvent(new CustomEvent('grove-branches-changed',{detail:{opened:p.open-1}}));
     return true;
   }
 

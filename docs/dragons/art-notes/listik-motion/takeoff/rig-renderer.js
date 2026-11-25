@@ -1,7 +1,7 @@
 'use strict';
-function createListikRenderer(atlas,rigData){
+function createListikRenderer(atlas,rigData,options={}){
   const decode=(Ctor,s)=>new Ctor(Uint8Array.from(atob(s),c=>c.charCodeAt(0)).buffer);
-  const c=document.createElement('canvas');c.width=1200;c.height=720;
+  const c=document.createElement('canvas');c.width=options.width||1200;c.height=Math.round(c.width*.6);
   const gl=c.getContext('webgl2',{alpha:true,premultipliedAlpha:true,antialias:true});
   if(!gl)throw Error('Для просмотра откройте MP4 рядом с этой сценой.');
   const program=gl.createProgram();
@@ -12,18 +12,29 @@ function createListikRenderer(atlas,rigData){
   uniform mat4 pose[${rigData.bones}];
   uniform vec2 camera;
   uniform vec3 attitude;
+  uniform float sculpt,part;
   out vec2 uv;
   out vec3 world;
   void main(){
     mat4 model=weights.x*pose[int(bones.x)]+weights.y*pose[int(bones.y)]+
       weights.z*pose[int(bones.z)]+weights.w*pose[int(bones.w)];
-    vec3 p=(model*vec4(pos,1.)).xyz-vec3(camera,0.);
+    vec3 rest=pos;
+    if(sculpt>.5 && part>4.5 && part<5.5){
+      float neck=smoothstep(136.,363.,rest.x);
+      float tail=smoothstep(697.,1180.,rest.x);
+      float mid=mix(154.,259.,neck)+24.*sin(smoothstep(680.,1280.,rest.x)*3.14159);
+      mid=mix(mid,211.,smoothstep(1060.,1350.,rest.x));
+      float radius=mix(mix(31.,65.,neck),14.,tail);
+      float section=clamp(1.-pow((-rest.y-mid)/radius,2.),0.,1.);
+      rest.z+=radius*.65*sqrt(section)*smoothstep(44.,130.,rest.x);
+    }
+    vec3 p=(model*vec4(rest,1.)).xyz-vec3(camera,0.);
     float cx=cos(attitude.x),sx=sin(attitude.x);
     float cy=cos(attitude.y),sy=sin(attitude.y);
     p=vec3(p.x,p.y*cx-p.z*sx,p.y*sx+p.z*cx);
     p=vec3(p.x*cy+p.z*sy,p.y,-p.x*sy+p.z*cy);
     world=p;
-    gl_Position=vec4(p.xy/vec2(925.,555.),-p.z/1400.,1.);
+    gl_Position=vec4(p.xy/vec2(925.,555.),-p.z/1400.,1.-sculpt*p.z/4200.);
     uv=st;
   }`;
   const f=`#version 300 es
@@ -33,6 +44,7 @@ function createListikRenderer(atlas,rigData){
   uniform sampler2D atlas;
   uniform float light;
   uniform vec3 attitude;
+  uniform vec4 air;
   out vec4 pixel;
   void main(){
     vec4 s=texture(atlas,uv);
@@ -42,7 +54,7 @@ function createListikRenderer(atlas,rigData){
     float facing=max(0.,dot(normal,normalize(vec3(-.57,.66,.49))));
     float rim=pow(1.-abs(normal.z),2.4)*smoothstep(-.3,.9,normal.y);
     vec3 lighting=mix(vec3(1.),vec3(.76,.78,.91)+vec3(.34,.28,.13)*facing+vec3(.28,.14,.04)*rim,attitude.z);
-    pixel=vec4(s.rgb*light*lighting,s.a);
+    pixel=vec4(mix(s.rgb*light*lighting,air.rgb*s.a,air.a),s.a);
   }`;
   for(const [kind,source] of [[gl.VERTEX_SHADER,v],[gl.FRAGMENT_SHADER,f]]){
     const shader=gl.createShader(kind);gl.shaderSource(shader,source);gl.compileShader(shader);
@@ -73,6 +85,8 @@ function createListikRenderer(atlas,rigData){
   gl.enable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
   const loc=name=>gl.getUniformLocation(program,name);
   const pose=loc('pose[0]'),cam=loc('camera'),light=loc('light'),att=loc('attitude');
+  const sculpt=loc('sculpt'),part=loc('part'),air=loc('air');
+  gl.uniform1f(sculpt,options.volume?1:0);
   const frames=decode(Float32Array,rigData.frames),stride=16*rigData.bones;
   const current=new Float32Array(stride);
   function sample(t,out){
@@ -82,13 +96,18 @@ function createListikRenderer(atlas,rigData){
   }
   const previous=new Float32Array(stride);
   const straight=[0,0,0];
-  return function(t,from,blend,camera,deform,attitude=straight){
+  const clearAir=[0,0,0,0];
+  return function(t,from,blend,camera,deform,attitude=straight,atmosphere=clearAir){
     sample(t,current);
     if(blend<1){sample(from,previous);for(let i=0;i<stride;i++)current[i]=previous[i]+(current[i]-previous[i])*blend;}
     if(deform)deform(current,camera);
     gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-    gl.uniform2fv(cam,camera);gl.uniform3fv(att,attitude);gl.uniformMatrix4fv(pose,false,current);
-    meshes.forEach(({vao,count},i)=>{gl.bindVertexArray(vao);gl.uniform1f(light,i===0?.87:1);gl.drawElements(gl.TRIANGLES,count,gl.UNSIGNED_SHORT,0)});
+    gl.uniform2fv(cam,camera);gl.uniform3fv(att,attitude);gl.uniform4fv(air,atmosphere);gl.uniformMatrix4fv(pose,false,current);
+    meshes.forEach(({vao,count},i)=>{
+      gl.bindVertexArray(vao);gl.uniform1f(part,i);
+      gl.uniform1f(light,i===0?(options.volume?.72:.87):1);
+      gl.drawElements(gl.TRIANGLES,count,gl.UNSIGNED_SHORT,0);
+    });
     return c;
   };
 }

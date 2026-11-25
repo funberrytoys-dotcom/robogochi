@@ -16,7 +16,7 @@
     const line=document.createElementNS(ns,'path');line.setAttribute('class','sap');
     line.setAttribute('d',d);line.setAttribute('pathLength','112');line.setAttribute('stroke',i%3===1?'#bcdac1':'#f59d67');
     line.setAttribute('stroke-width',i<5?'1.3':'.8');line.setAttribute('opacity',i<5?'.57':'.42');
-    const highlight=line.cloneNode();highlight.setAttribute('class','sap sap-lit');highlight.style.animationDelay=(-i*.84)+'s';
+    const highlight=line.cloneNode();highlight.setAttribute('class','sap sap-lit');highlight.style.setProperty('--stream-order',i);highlight.style.animationDelay=(-i*.84)+'s';
     veins.append(line,highlight);
   });
   for(let i=0;i<10;i++){
@@ -25,9 +25,11 @@
     heart.append(spark);
   }
   let timeout;
-  heart.addEventListener('click',()=>{
+  function answer(){
     tree.classList.remove('heart-awake');void heart.offsetWidth;tree.classList.add('heart-awake');
     window.GroveAir?.stir(heart);window.DragonAudio?.play('note0');
     clearTimeout(timeout);timeout=setTimeout(()=>tree.classList.remove('heart-awake'),1800);
-  });
+  }
+  heart.addEventListener('click',answer);
+  window.addEventListener('grove-forage-awaken',answer);
 })();
