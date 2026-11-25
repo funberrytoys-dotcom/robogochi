@@ -66,7 +66,12 @@
     menu.innerHTML=menuButton('school','Школа','book')+menuButton('games','Игры','games')+
       '<details id="gh-more" class="gh-details"><summary class="gh-link">'+icon('pouch')+'<span>Ещё</span></summary><div class="gh-pop" aria-label="Другие занятия">'+
       '<button type="button" class="gh-link gh-atlas" data-page="collection">'+icon('collection')+'<span>Коллекция<small>Атлас драконов</small></span></button>'+menuButton('shop','Лавка','shop')+menuButton('qr','QR игрушки','qr')+'</div></details>';
-    more=document.getElementById('gh-more');more.querySelector('.gh-pop').append(audio);
+    more=document.getElementById('gh-more');
+    if (location.protocol==='https:' || location.protocol==='http:') {
+      const island=document.createElement('a');island.className='gh-link';island.href='island/';
+      island.innerHTML=icon('leaf')+'<span>Остров Листика</span>';more.querySelector('.gh-pop').append(island);
+    }
+    more.querySelector('.gh-pop').append(audio);
     disclose(more);
     // The actual audio node stays mounted. Its existing click handler and live
     // aria-pressed state still belong to the game's audio controller.
