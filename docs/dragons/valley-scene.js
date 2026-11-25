@@ -154,20 +154,21 @@
     return shader;
   }
 
-  function image(name){
+  function image(name,detail=false){
     const img=new Image();
-    const path='assets/depth/'+name+'.webp';
+    const prefix=detail&&name.startsWith('biplanes-')&&!name.startsWith('biplanes-cloud-')?'detail/':'';
+    const path='assets/depth/'+prefix+name+'.webp';
     img.src=window.groveAsset?window.groveAsset(path):path;
     return img.decode().then(()=>img);
   }
 
-  async function mount(canvas,{preview=false,control=canvas,sequence=null,gameSunset=false}={}){
+  async function mount(canvas,{preview=false,control=canvas,sequence=null,gameSunset=false,detail=false}={}){
     const gl=canvas.getContext('webgl',{alpha:false,antialias:false});
     if(!gl)throw Error('WebGL unavailable');
     const assetNames=['valley','mid','biplanes-green-04','biplanes-green-01','biplanes-spectre-03',
       'biplanes-green-00','biplanes-green-02','biplanes-snow-03','biplanes-storm-02',
       'biplanes-spectre-01','biplanes-lava-04','biplanes-cloud-03','biplanes-cloud-09','biplanes-cloud-12'];
-    const assets=await Promise.all(assetNames.map(image));
+    const assets=await Promise.all(assetNames.map(name=>image(name,detail)));
     const maps=sequence?await Promise.all(sequence.water.map(async src=>{
       const map=new Image();map.src=src;await map.decode();return map;
     })):[];
@@ -316,7 +317,7 @@
     }
     if(sequence)gl.viewport(0,0,canvas.width,canvas.height);
     else new ResizeObserver(()=>{
-      const ratio=Math.min(devicePixelRatio||1,1.5,900/Math.max(canvas.clientHeight,1));
+      const ratio=Math.min((devicePixelRatio||1)*(detail?1.15:1),detail?2.65:1.5,(detail?1780:900)/Math.max(canvas.clientHeight,1));
       canvas.width=Math.max(1,Math.round(canvas.clientWidth*ratio));
       canvas.height=Math.max(1,Math.round(canvas.clientHeight*ratio));
       gl.viewport(0,0,canvas.width,canvas.height);
@@ -356,7 +357,7 @@
     canvas.setAttribute('aria-hidden','true');
     plane.prepend(canvas);
     const params=new URLSearchParams(location.search);
-    mount(canvas,{control:document.getElementById('habitat'),gameSunset:!params.has('sky')}).then(scene=>{
+    mount(canvas,{control:document.getElementById('habitat'),gameSunset:!params.has('sky'),detail:true}).then(scene=>{
       plane.classList.add('valley-active');
       GroveValley.setAtmosphere=scene.setAtmosphere;
       GroveValley.setVantage=scene.setVantage;

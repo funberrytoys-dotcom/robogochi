@@ -1,7 +1,7 @@
 #world{
   inset:0 auto auto 0;
   transform:var(--world-transform,none);
-  transition:transform .72s cubic-bezier(.22,.78,.25,1);
+  transition:transform .72s cubic-bezier(.22,.78,.25,1),width .72s cubic-bezier(.22,.78,.25,1),height .72s cubic-bezier(.22,.78,.25,1);
   filter:none;
 }
 #habitat[data-gesture] #world,#habitat[data-gesture] .depth-plane{transition:none}
@@ -19,6 +19,8 @@
 .island-home img{display:block;width:100%;height:auto;pointer-events:none}
 #world .tree-art,#world .nest-rim{background:none;filter:none;mask-image:none}
 #world .nest-rim{clip-path:polygon(14% 60.5%,18% 60.75%,22.7% 60.5%,22.9% 61.8%,14% 61.8%)}
+.tree-detail,.tree-detail-rim{position:absolute;pointer-events:none;left:9.375%;top:37.7604%;width:33.3984%;height:35.8073%;opacity:var(--nest-detail,0);transition:opacity .38s ease}
+.tree-detail-rim{z-index:3;clip-path:polygon(12% 64.2%,26% 64.6%,41% 64.1%,42% 68%,12% 68%)}
 #world .bark-shade{display:none}
 #tree-heart{left:48.9%;top:43.75%;width:14%;transform:translate(-50%,-50%);z-index:2}
 #tree-heart img{filter:saturate(1.23) brightness(1.18)}
@@ -28,24 +30,15 @@
 #world #hero.baby{width:2.7%}
 #world #hero.teen{width:4.2%}
 #world #hero.adult{width:6.3%}
-#world #hero.baby.rig-specimen{width:4.75%}
-#world #hero.teen.rig-specimen{width:6.5%}
-#world #hero.adult.rig-specimen{width:8.4%}
-.perch-stop{width:calc(24px / var(--world-zoom,1));height:calc(24px / var(--world-zoom,1));padding:calc(4px / var(--world-zoom,1));border-width:1px}
+.perch-stop{width:24px;height:24px;padding:4px;border-width:1px}
 .decor-lantern{left:25%;top:54%;width:5%;height:7%}
 .decor-blossoms{left:5%;top:59%;width:10%;height:6%}
 .decor-mushrooms{left:28%;top:58%;width:8%;height:5%}
 #shrouds{mask-image:none}
-.dragon-stage-rig{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;visibility:hidden}
-#hero.rig-specimen .dragon-stage-rig{inset:auto auto -6% -8%;width:116%;height:auto}
-.dragon-rig-visible #hero-img{visibility:hidden}
-.dragon-rig-visible .dragon-stage-rig{visibility:visible;filter:drop-shadow(0 3px 2px #22102050)}
-.dragon-lifted :is(#hero-img,.dragon-stage-rig,.hero-halo){visibility:hidden}
+#world #hero[data-dragon-reaction] #hero-img{animation:none;transform:var(--reaction-transform,none);transform-origin:50% 86%}
+.dragon-lifted :is(#hero-img,.hero-halo){visibility:hidden}
 .dragon-stage-lift{position:absolute;height:auto;pointer-events:none;z-index:10;transform:translate(-50%,-30%);filter:drop-shadow(0 10px 8px #1a102c55)}
 .dragon-stage-lift[hidden]{display:none}
-.atlas-rig{display:block;width:100%;height:auto;max-height:25svh;object-fit:contain;border:1px solid #cbb78250;border-radius:13px;background:radial-gradient(ellipse,#51837875,#18333b90 67%,#252540)}
-.evo-card[data-atlas-stage]{color:inherit;cursor:pointer}
-.evo-card[data-atlas-stage][aria-pressed="true"]{box-shadow:inset 0 0 0 1px #f1d390;background:#655faa28}
 .world-fog{display:block;width:100%;height:100%;pointer-events:none}
 .depth-plane.middle img{filter:saturate(.88) brightness(.75) hue-rotate(12deg);opacity:.70}
 .forest-light{opacity:.47;mix-blend-mode:screen}

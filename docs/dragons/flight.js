@@ -82,13 +82,11 @@
       if (button.matches(':focus-visible, :active')) continue;
       const route = chooseRoute(button,d,isHero);
       if (!route) continue;
-      const rig=d.species>=6;
-      const cel = rig?document.createElement('canvas'):new Image();
-      if(rig){cel.width=480;cel.height=320;}else cel.alt='';
+      const cel=new Image();cel.alt='';
       cel.className = 'flight-cel';
       cel.setAttribute('aria-hidden','true');
-      const url = 'assets/flight/' + forms[d.stage] + '-' + d.species + '.webp';
-      active = {...route, cel, rig:rig?cel.getContext('2d'):null, start:0, count:Branches.count(), phase:''};
+      const url = d.species===0?Grove.sprite(0,d.stage):groveAsset('assets/flight/'+forms[d.stage]+'-'+d.species+'.webp');
+      active = {...route, cel, start:0, count:Branches.count(), phase:''};
       const trip = active;
       const launch = () => {
         if (active !== trip) return;
@@ -99,7 +97,7 @@
         tick(trip.start);
       };
       cel.onerror = () => { if (active === trip) { finish(); schedule(4000); } };
-      if(rig)launch();else {cel.onload=launch;cel.src=groveAsset(url);}
+      cel.onload=launch;cel.src=url;
       turn += i + 1;
       return;
     }
@@ -124,11 +122,6 @@
     }
     const xy = leg==='out' ? journey(from,to,dt/travel,flight.lift) : leg==='land' ? to :
       journey(to,from,(dt-travel-pause)/travel,flight.lift);
-    if(flight.rig && leg!=='land'){
-      const elapsed=leg==='out'?dt:dt-travel-pause;
-      const pose=elapsed<300?'takeoff':elapsed>travel-420?'land':'fly';
-      DragonStage.draw(flight.rig,d,pose,elapsed/1000,{amount:pose==='land'?Math.max(0,(travel-elapsed)/420):1});
-    }
     button.style.setProperty('--flight-x',xy[0].toFixed(3)+'%');
     button.style.setProperty('--flight-y',xy[1].toFixed(3)+'%');
     raf = requestAnimationFrame(tick);

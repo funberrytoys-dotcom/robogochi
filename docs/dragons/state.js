@@ -3,9 +3,11 @@
   const params = new URLSearchParams(location.search);
   const showcase=params.get('showcase');
   const key = 'toysberry.dragon-tree.'+(showcase==='rigs'?'atlas.':showcase==='grove'?'showcase.':params.get('journey')==='nest'?'first-bough.':'')+'v1';
-  const names = ['Листик','Искорка','Капля','Слива','Зорька','Лучик', ...DragonRig.families.map(row=>row.name)];
-  const families = ['Цветущий','Огненный','Росистый','Лунный','Коралловый','Солнечный', ...DragonRig.families.map(row=>row.family)];
-  const ages = ['Малыш','Подросток','Большой дракон'];
+  const names = ['Листик','Искорка','Капля','Слива','Зорька','Лучик'];
+  const families = ['Цветущий','Огненный','Росистый','Лунный','Коралловый','Солнечный'];
+  const ages = ['Малыш','Подросток','Высший дракон'];
+  const retiredNames=['Плющ','Шёлк','Уголёк','Пончик','Громик','Волна','Триша','Сумрак','Янтарь','Люма'];
+  const relatedSpecies=[0,2,1,4,2,2,0,3,5,3];
   const forms = ['baby','teen','adult'];
   const codes = Object.fromEntries(['LEAF','EMBER','DEW','LILAC','PEACH','SUN'].map((color,i)=>['TB-'+color+'-01',{species:i}]));
   codes['TB-BLOOM-02']={species:0,adult:true};
@@ -25,7 +27,7 @@
     const s={v:1, coins:30, dragons:[], eggs:[makeEgg()], focus:'egg', redeemed:[], owned:[], equipped:[], last:now()};
     if(showcase==='grove'||showcase==='rigs'){
       s.eggs=[];s.owned=['lantern','blossoms'];s.equipped=[...s.owned];s.coins=38;
-      const lineup=showcase==='rigs'?DragonRig.families.map((_,i)=>[i+6,i%3]):[[0,2],[1,0],[2,1],[3,0]];
+      const lineup=[[0,2],[1,0],[2,1],[3,0]];
       s.dragons=lineup.map(([species,stage],i)=>({
         id:'grove-'+i,species,stage,name:names[species],born:now()-Math.max(0,3-i)*86400000,xp:[48,18,31,6][i]??20,
         tricks:i===0?{hop:'Прыгни!'}:{},needs:{food:70,energy:81,clean:73,fun:65},sleeping:false,source:''
@@ -37,7 +39,16 @@
   function load() {
     try {
       const s=JSON.parse(localStorage.getItem(key));
-      if(s?.v===1 && Array.isArray(s.eggs) && Array.isArray(s.dragons)) return s;
+      if(s?.v===1 && Array.isArray(s.eggs) && Array.isArray(s.dragons)){
+        for(const record of [...s.eggs,...s.dragons]){
+          const old=record.species-6;
+          if(!Number.isInteger(old)||old<0||old>=relatedSpecies.length)continue;
+          record.retiredSpecies=record.species;
+          record.species=relatedSpecies[old];
+          if(record.name===retiredNames[old])record.name=names[record.species];
+        }
+        return s;
+      }
     } catch {}
     return fresh();
   }
@@ -84,7 +95,7 @@
   }
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   function sprite(species,stage,pose='idle') {
-    if(species>=6)return DragonStage.portrait(species,stage,pose==='happy'?'cuddle':pose);
+    if(species===0)return groveAsset('assets/characters-v2/listik-'+forms[stage]+'.webp');
     const form=pose==='happy'?'happy':forms[stage];
     const prefix=pose==='sleep'?'sleep-':reducedMotion.matches?'still-':'';
     return groveAsset('assets/characters-v2/'+prefix+form+'-'+species+'.webp');

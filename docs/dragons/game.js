@@ -109,8 +109,7 @@
       DragonStage.express(pose,1300);creatureCue(pose);
     }else{
       sound(fx);react(words);
-      if(action==='feed'&&d.species>=6)DragonStage.express('purr',820);
-      else bounce();
+      bounce();
     }
     GroveAir.stir(hero);
     flourish({feed:'berry',wash:'drop',pet:'heart'}[action],{feed:'#f9b4ae',wash:'#9feef3',pet:'#ffbecd'}[action]);
@@ -157,29 +156,10 @@
     if($('eggs'))$('eggs').onclick=()=>{s.focus='egg';save();close();};$('add-toy').onclick=()=>openMenu('qr');
   }
   function family(i){
-    const rig=i>=6;
     modal('Семейство');panel.innerHTML='<div class="sheet stack">'+header('АТЛАС ДРАКОНОВ',families[i])+
-      (rig?'<canvas class="atlas-rig" width="480" height="320" aria-label="Живая модель дракона"></canvas>':'')+
-      '<div class="evo-line">'+ages.map((a,j)=>{
-        const contents='<img src="'+sprite(i,j)+'" alt=""><b>'+a+'</b>';
-        return rig?'<button type="button" class="evo-card" data-atlas-stage="'+j+'" aria-pressed="'+(j===0)+'">'+contents+'</button>':'<div class="evo-card">'+contents+'</div>';
-      }).join('')+'</div>'+
+      '<div class="evo-line">'+ages.map((a,j)=>'<div class="evo-card"><img src="'+sprite(i,j)+'" alt=""><b>'+a+'</b></div>').join('')+'</div>'+
       (i<2?'<h3>Из игрушки в игру</h3><div class="toy-pair"><figure><img src="'+groveAsset('assets/dragons/toy-'+(i===0?'leaf':'ember')+'.webp')+'" alt="Фотография игрушки"><figcaption>Игрушка ToysBerry</figcaption></figure><figure><img src="'+sprite(i,2)+'" alt="Большой дракон из игры"><figcaption>Дракон на древе</figcaption></figure></div>':'')+
       '<button class="soft" id="back-collection">Вернуться в коллекцию</button></div>';$('back-collection').onclick=collection;
-    if(rig){
-      const preview=panel.querySelector('.atlas-rig'),ctx=preview.getContext('2d'),buttons=[...panel.querySelectorAll('[data-atlas-stage]')];
-      let stage=0,frame=0,last=0;
-      const draw=(time=0)=>DragonStage.draw(ctx,{species:i,stage},'idle',time);
-      function tick(now){
-        if(!preview.isConnected)return;
-        if(now-last>34){last=now;if(!document.hidden&&!reduced.matches)draw(now/1000);}
-        frame=requestAnimationFrame(tick);
-      }
-      buttons.forEach((button,index)=>button.onclick=()=>{
-        stage=index;buttons.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===index)));draw();
-      });
-      draw();frame=requestAnimationFrame(tick);cleanup=()=>cancelAnimationFrame(frame);
-    }
   }
   function shop(){
     const missing = Math.max(0, Grove.eggPrice - s.coins);

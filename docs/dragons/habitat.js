@@ -4,7 +4,7 @@
   const names=['Гнездо','Цветущая ветвь','Ветвь светляков','Золотой уступ','Солнечная крона','Тропа к сердцу','Корни Древа'];
   const mounts=GroveCamera.mounts,nest=mounts[0];
   const islands=[
-    {name:'Западный остров',x:-23,y:55,width:29,asset:'world-foundation'},
+    {name:'Западный остров',x:-23,y:55,width:29,asset:'roost-west'},
     {name:'Восточный остров',x:124,y:68,width:29,asset:'roost-east'},
     {name:'Верхний остров',x:117,y:29,width:24,asset:'roost-upper'},
   ];
@@ -14,7 +14,7 @@
     const island=document.createElement('button'),art=new Image();
     island.className='island-home';island.type='button';island.title=name;island.disabled=true;
     island.style.left=x+'%';island.style.top=y+'%';island.style.width=width+'%';
-    art.src=groveAsset('assets/depth/'+asset+'.webp');art.alt='';
+    art.src=groveAsset('assets/depth/detail/'+asset+'.webp');art.alt='';
     island.append(art);landscape.append(island);return island;
   });
   function seats(count){

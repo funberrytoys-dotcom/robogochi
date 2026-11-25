@@ -23,10 +23,10 @@
       x = clamp(x,Math.min((width-w)/2,width-w*1.44-pad),Math.max((width-w)/2,w*.42+pad));
       y = h<height?(height-h)/2:clamp(y,height-h-pad,pad+height*.105);
     }
-    world.style.width = base+'px';
-    world.style.height = base*1.5+'px';
-    world.style.setProperty('--world-transform',`translate3d(${x}px,${y}px,0) scale(${zoom})`);
-    world.style.setProperty('--world-zoom',zoom);
+    world.style.width = w+'px';
+    world.style.height = h+'px';
+    world.style.setProperty('--world-transform',`translate3d(${x}px,${y}px,0)`);
+    world.style.setProperty('--nest-detail',clamp((zoom-2.6)/1.25,0,1));
     const view=zoom<.73?'valley':zoom<2.1?'tree':'near';
     field.dataset.view = view;
     button.title = {near:'Осмотреть древо',tree:'Осмотреть долину',valley:'Вернуться к дракону'}[view];
@@ -72,7 +72,7 @@
   }
 
   function zoomAt(z,point,origin){
-    zoom=clamp(z,.50,7.25);
+    zoom=clamp(z,.50,5.4);
     x=point.x-origin.x*zoom;
     y=point.y-origin.y*zoom;
     mode='free';layout();
