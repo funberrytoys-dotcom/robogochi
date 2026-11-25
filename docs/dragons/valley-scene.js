@@ -41,7 +41,24 @@
       vec2 dotAt=vec2(.23+hash(cell+4.)*.54,.23+hash(cell+8.)*.54);
       float distanceToStar=length(fract(field)-dotAt);
       float pulse=.72+.28*sin(clock*1.5+seed*42.);
-      return (1.-smoothstep(.057,.144,distanceToStar))*kindle*pulse*(1.-smoothstep(.22,.44,p.y));
+      return (1.-smoothstep(.035,.105,distanceToStar))*kindle*pulse*.82*(1.-smoothstep(.22,.44,p.y));
+    }
+    // Long wind-sheared banks. Gaps in each band keep a dark sky between them.
+    float cloudVeil(vec2 p,float seed,float speed){
+      float wind=clock*speed;
+      float bend=noise(vec2(p.x*2.2+wind,seed));
+      float line=.22+.027*sin(p.x*5.+seed)+bend*.10;
+      float mist=noise(vec2(p.x*6.+wind,p.y*23.+seed));
+      float fiber=noise(vec2(p.x*12.+wind*.9,p.y*67.+seed));
+      float edge=abs(p.y-line+.019*(mist-.5));
+      return (1.-smoothstep(.005,.041+.03*mist,edge))*smoothstep(.29,.74,.64*bend+.36*fiber);
+    }
+    vec3 driftingSky(vec3 base,vec2 p,float night){
+      float high=cloudVeil(p+vec2(.07,.088),2.8,.009);
+      float low=cloudVeil(p-vec2(.19,.062),8.1,.018);
+      vec3 pearl=mix(vec3(.88,.66,.75),vec3(.25,.46,.72),night);
+      vec3 lilac=mix(vec3(.65,.54,.69),vec3(.32,.33,.61),night);
+      return mix(mix(base,pearl,high*.50),lilac,low*.56);
     }
     vec3 biplanesSunset(vec2 p){
       // The three stops are the sunset preset from Biplanes sky-background.ts.
@@ -65,7 +82,7 @@
       if(layer<.5){
         if(fire>.5){
           vec2 p=vec2(uv.x,(uv.y-.20)*1.64+skyRise);
-          gl_FragColor=vec4(biplanesSunset(p),1.);
+          gl_FragColor=vec4(driftingSky(biplanesSunset(p),p,.34),1.);
           return;
         }
         vec3 top=mix(vec3(.26,.51,.69),vec3(.31,.21,.44),dusk);
@@ -91,7 +108,7 @@
           night*(1.-rain*.91)*smoothstep(.14,.36,uv.x)*(1.-smoothstep(.76,1.,uv.x));
         float cloud=noise(vec2(uv.x*5.+clock*.019,uv.y*20.))*.68+noise(vec2(uv.x*13.+clock*.033,uv.y*45.))*.32;
         c=mix(c,mix(vec3(.94,.79,.73),vec3(.23,.34,.50),night),smoothstep(.53,.80,cloud)*(.19+.29*rain)*(1.-smoothstep(.40,.62,uv.y)));
-        gl_FragColor=vec4(c,1.);
+        gl_FragColor=vec4(driftingSky(c,uv,night),1.);
       }else if(layer>5.5){
         // Two remapped wave layers and a foam texture from 2d_water.
         // World Y runs down the fall, so the sampled texture scrolls upward.
@@ -343,6 +360,7 @@
         if(reduced.matches)render(performance.now());
       },
       setAtmosphere(time,weather){
+        if(detail)window.dispatchEvent(new CustomEvent('grove-atmosphere',{detail:{phase:time}}));
         wantPhase=Math.min(1,Math.max(0,time));
         wantRain=Math.min(1,Math.max(0,weather));
         if(reduced.matches)render(performance.now());

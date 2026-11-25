@@ -4,12 +4,13 @@
   const world = document.querySelector('#world');
   const button = document.querySelector('#overview');
   const overlay = document.querySelector('#overlay');
-  const mounts = [[18.35,60.55],[78,68.8],[80.5,41.2],[23,24.3],[86,28.5],[35,33],[23.5,86.1]];
-  const views={valley:.65,tree:1,near:5.15};
+  const mounts = [[25.9,60.55],[78,68.8],[80.5,41.2],[23,24.3],[86,28.5],[35,33],[23.5,86.1]];
+  const views={valley:1.03,tree:2.12,near:8.95};
   const points = new Map();
   const clamp = (v,min,max) => Math.max(min,Math.min(max,v));
   let width, height, base, zoom = 1, x = 0, y = 0;
-  let mode = 'near', home = mounts[0], gesture, suppressUntil = 0;
+  const initialView = new URLSearchParams(location.search).get('view');
+  let mode = ['tree','valley'].includes(initialView) ? initialView : 'near', home = mounts[0], gesture, suppressUntil = 0;
 
   function layout(){
     const w = base*zoom, h = w*1.5;
@@ -26,8 +27,7 @@
     world.style.width = w+'px';
     world.style.height = h+'px';
     world.style.setProperty('--world-transform',`translate3d(${x}px,${y}px,0)`);
-    world.style.setProperty('--nest-detail',clamp((zoom-2.6)/1.25,0,1));
-    const view=zoom<.73?'valley':zoom<2.1?'tree':'near';
+    const view=zoom<1.27?'valley':zoom<3.1?'tree':'near';
     field.dataset.view = view;
     button.title = {near:'Осмотреть древо',tree:'Осмотреть долину',valley:'Вернуться к дракону'}[view];
     button.setAttribute('aria-label',button.title);
@@ -35,10 +35,10 @@
   }
 
   function frame(){
-    zoom = views[mode];
+    zoom = mode==='near' && (home[0]<0 || home[0]>100) ? 5.15 : views[mode];
     const [hx,hy] = home;
     const nest=hx===mounts[0][0]&&hy===mounts[0][1];
-    x = width*(nest?.20:.48)-hx/100*base*zoom;
+    x = width*(nest?.40:.48)-hx/100*base*zoom;
     y = height*.65-hy/100*base*1.5*zoom;
     layout();
   }
@@ -72,7 +72,7 @@
   }
 
   function zoomAt(z,point,origin){
-    zoom=clamp(z,.50,5.4);
+    zoom=clamp(z,.50,10.8);
     x=point.x-origin.x*zoom;
     y=point.y-origin.y*zoom;
     mode='free';layout();

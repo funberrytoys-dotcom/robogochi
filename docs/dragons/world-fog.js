@@ -6,7 +6,7 @@
     [.84,.258,.274,.139,5], [.44,.107,.502,.170,6], [.39,.315,.205,.089,6],
     [.52,.912,.530,.163,7], [.40,.785,.295,.124,7],
   ];
-  const clearings = [[.489,.437,.194,.125],[.187,.605,.177,.106]];
+  const clearings = [[.489,.437,.194,.125],[.259,.605,.169,.106]];
   const clamp = v => Math.max(0,Math.min(1,v));
   function smooth(a,b,v){const t=clamp((v-a)/(b-a));return t*t*(3-2*t);}
   function distance(x,y,[cx,cy,rx,ry]){return Math.hypot((x-cx)/rx,(y-cy)/ry);}

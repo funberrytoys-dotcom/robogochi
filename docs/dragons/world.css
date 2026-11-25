@@ -17,19 +17,28 @@
 .island-home{position:absolute;transform:translate(-50%,-21%);filter:saturate(.83) brightness(.94) sepia(.12);border:0;padding:0;background:none;pointer-events:auto}
 .island-home:disabled{pointer-events:none;opacity:1}
 .island-home img{display:block;width:100%;height:auto;pointer-events:none}
-#world .tree-art,#world .nest-rim{background:none;filter:none;mask-image:none}
-#world .nest-rim{clip-path:polygon(14% 60.5%,18% 60.75%,22.7% 60.5%,22.9% 61.8%,14% 61.8%)}
-.tree-detail,.tree-detail-rim{position:absolute;pointer-events:none;left:9.375%;top:37.7604%;width:33.3984%;height:35.8073%;opacity:var(--nest-detail,0);transition:opacity .38s ease}
-.tree-detail-rim{z-index:3;clip-path:polygon(12% 64.2%,26% 64.6%,41% 64.1%,42% 68%,12% 68%)}
+#elder-rig,.nursery-nest,.root-woods{position:absolute;display:block;pointer-events:none}
+#elder-rig{inset:0;width:100%;height:100%;overflow:visible}
+.nursery-nest{left:23.45%;top:60.04%;width:4.9%;height:auto}
+.nest-front{z-index:3}
+.root-woods{height:auto;opacity:.87}
+[data-stem]{animation:branch-wind 4.7s ease-in-out var(--phase) infinite alternate;transform-origin:0 0}
+[data-stem=sprig]{animation-duration:3.8s}
+@keyframes branch-wind{from{transform:rotate(-4deg)}to{transform:rotate(5.5deg)}}
+@media(prefers-reduced-motion:reduce){[data-stem]{animation:none}}
 #world .bark-shade{display:none}
 #tree-heart{left:48.9%;top:43.75%;width:14%;transform:translate(-50%,-50%);z-index:2}
-#tree-heart img{filter:saturate(1.23) brightness(1.18)}
+#tree-heart img{filter:none}
 .heart-aura{inset:-27% -71%;background:radial-gradient(ellipse,#ffeb9d75 0%,#ffab6141 34%,#ff7b4816 55%,transparent 73%)}
 #heart-veins{transform:translate(-2%,2%);opacity:.55}
 #world #hero.egg,#world .fx-shell{width:2.4%}
 #world #hero.baby{width:2.7%}
 #world #hero.teen{width:4.2%}
 #world #hero.adult{width:6.3%}
+#world #hero.egg,#world .fx-shell{width:2.2%}
+#world #hero.baby:not([data-island-home]){width:2.8%}
+#world #hero.teen:not([data-island-home]){width:4.1%}
+#world #hero.adult:not([data-island-home]){width:6.8%}
 .perch-stop{width:24px;height:24px;padding:4px;border-width:1px}
 .decor-lantern{left:25%;top:54%;width:5%;height:7%}
 .decor-blossoms{left:5%;top:59%;width:10%;height:6%}
@@ -39,6 +48,7 @@
 .dragon-lifted :is(#hero-img,.hero-halo){visibility:hidden}
 .dragon-stage-lift{position:absolute;height:auto;pointer-events:none;z-index:10;transform:translate(-50%,-30%);filter:drop-shadow(0 10px 8px #1a102c55)}
 .dragon-stage-lift[hidden]{display:none}
+#habitat[data-view=valley] .world-fog{opacity:.82}
 .world-fog{display:block;width:100%;height:100%;pointer-events:none}
 .depth-plane.middle img{filter:saturate(.88) brightness(.75) hue-rotate(12deg);opacity:.70}
 .forest-light{opacity:.47;mix-blend-mode:screen}

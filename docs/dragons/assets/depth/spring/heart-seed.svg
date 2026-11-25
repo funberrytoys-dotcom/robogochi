@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 200">
+  <defs>
+    <radialGradient id="lamp"><stop stop-color="#ffc28c" stop-opacity=".86"/><stop offset=".52" stop-color="#ff8b83" stop-opacity=".28"/><stop offset="1" stop-color="#f887a1" stop-opacity="0"/></radialGradient>
+    <linearGradient id="petal" x2=".2" y2="1"><stop stop-color="#ffddbc"/><stop offset="1" stop-color="#e27c86"/></linearGradient>
+  </defs>
+  <ellipse fill="url(#lamp)" cx="60" cy="106" rx="59" ry="86"/>
+  <path fill="#996276" d="M54 187c2-24-19-39-30-59-12-23-6-45 7-62-6 23 8 31 19 41-13-35 0-56 16-77 6-8 12-17 16-29 3 25-7 38-6 53 0 16 11 25 16 38 4-7 6-16 4-25 17 21 10 46 0 64-13 25-34 31-42 56Z"/>
+  <path fill="url(#petal)" d="M56 174c4-24-29-43-30-71-1-8 0-15 4-22 1 17 12 23 20 29-9-36 9-49 22-75-3 28-5 37 10 57 9 11 10 18 9 25 7-6 12-17 13-27 1 43-25 58-48 84Z"/>
+  <path fill="#ffe1ad" d="M59 153c-1-17-23-28-22-49 6 10 12 12 20 16-3-12-1-23 5-34 9 17 24 20 22 38-2 12-17 20-25 29Z"/>
+  <path fill="#fff4cd" d="M60 140c-2-8-11-15-11-23 5 2 9 4 12 8 2-7 6-10 11-12 3 12-6 20-12 27Z"/>
+</svg>
